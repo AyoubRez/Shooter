@@ -41,4 +41,11 @@ public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns Follow Camera subObject */
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+protected:
+	//Called for forward / backwards Input
+	void MoveForward(float Value);
+
+	//Called for side to side input
+	void MoveRight(float Value);
 };
