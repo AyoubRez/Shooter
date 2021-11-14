@@ -36,6 +36,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* FollowCamera;
 
+	/** BaseTurnRate in deg/sec. Other scaling may affect final turn rate */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float BaseTurnRate;
+
+	/** BaseLookUpRate in deg/sec. Other scaling may affect final Look up  rate */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float BaseLookUpRate;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -48,4 +56,16 @@ protected:
 
 	//Called for side to side input
 	void MoveRight(float Value);
+
+	/**
+	 * Called via input to turn at given rate
+	 * @param Rate This is normalized rate , i.e.  1.0 means 100% of desired turn rate
+	 */
+	void TurnAtRate(float Rate);
+
+	/**
+	 * Called via input to look up  at given rate
+	 * @param Rate This is normalized rate , i.e.  1.0 means 100% of desired look up  rate
+	 */
+	void LookUpAtRate(float Rate);
 };
