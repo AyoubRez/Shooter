@@ -87,6 +87,9 @@ public:
 	/** Returns Follow Camera subObject */
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	/** Returns bAiming State */
+	FORCEINLINE bool GetAiming() const { return bAiming; }
+
 protected:
 	//Called for forward / backwards Input
 	void MoveForward(float Value);
