@@ -42,4 +42,8 @@ private:
 	/** Offset Yaw the frame before we stopped moving */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
 	float LastMovementOffsetYaw;
+
+	/** is the Character Aiming  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	bool bAiming;
 };
