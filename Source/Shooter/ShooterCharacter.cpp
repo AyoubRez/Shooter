@@ -15,9 +15,26 @@
 
 // Sets default values
 AShooterCharacter::AShooterCharacter():
+
+	//Base Rates Turn/lookUp
 	BaseTurnRate(45.f),
 	BaseLookUpRate(45.f),
+
+	//Turn/look up rate for aiming / not aiming 
+	HipTurnRate(90.f),
+	HipLookUpRate(90.F),
+	AimingTurnRate(20.f),
+	AimingLookUpRate(20.f),
+	//Mouse Look Sensitivity scale factore 
+
+	MouseHipTurnRate(1.0f),
+	MouseAimingLookUpRate(0.2f),
+	MouseHipLookUpRate(1.0f),
+	MouseAimingTurnRate(0.2f),
+	// true when aiming the weapon 
 	bAiming(false),
+
+	//Camera field Of view 
 	CameraDefaultFOV(0.f), //is gonna get set in begin play
 	CameraZoomedFOV(35.f),
 	ZoomInterpolationSpeed(20.f),
@@ -69,9 +86,12 @@ void AShooterCharacter::BeginPlay()
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	//Handle Interpolation when Zoom While Aiming 
 	CameraInterpolationZoom(DeltaTime);
+
+	//Set Look rates Based on aiming
+	SetLookRates();
 }
 
 // Called to bind functionality to input
@@ -85,8 +105,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AShooterCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AShooterCharacter::LookUpAtRate);
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
+	PlayerInputComponent->BindAxis("LookUp", this, &AShooterCharacter::LookUp);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -133,6 +153,34 @@ void AShooterCharacter::LookUpAtRate(float Rate)
 {
 	//Calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds()); // deg/sec*sec/frame => deg/frame
+}
+
+void AShooterCharacter::Turn(float Value)
+{
+	float TurnScaleFactor{};
+	if (bAiming)
+	{
+		TurnScaleFactor = MouseAimingTurnRate;
+	}
+	else
+	{
+		TurnScaleFactor = MouseHipTurnRate;
+	}
+	AddControllerYawInput(Value * TurnScaleFactor);
+}
+
+void AShooterCharacter::LookUp(float Value)
+{
+	float LookUpScaleFactor{};
+	if (bAiming)
+	{
+		LookUpScaleFactor = MouseAimingLookUpRate;
+	}
+	else
+	{
+		LookUpScaleFactor = MouseHipLookUpRate;
+	}
+	AddControllerPitchInput(Value * LookUpScaleFactor);
 }
 
 void AShooterCharacter::FireWeapon()
@@ -260,4 +308,18 @@ void AShooterCharacter::CameraInterpolationZoom(float DeltaTime)
 		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpolationSpeed);
 	}
 	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
+}
+
+void AShooterCharacter::SetLookRates()
+{
+	if (bAiming)
+	{
+		BaseTurnRate = AimingTurnRate;
+		BaseLookUpRate = AimingLookUpRate;
+	}
+	else
+	{
+		BaseTurnRate = HipTurnRate;
+		BaseLookUpRate = HipLookUpRate;
+	}
 }
