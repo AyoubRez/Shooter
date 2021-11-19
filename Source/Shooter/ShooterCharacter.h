@@ -74,6 +74,13 @@ private:
 	/** Zoomed Camera FOV value  */
 	float CameraZoomedFOV;
 
+	/** Current field of view in this frame*/
+	float CameraCurrentFOV;
+
+	/** interpolation speed when zooming when aiming   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float ZoomInterpolationSpeed;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -108,4 +115,6 @@ protected:
 	void AimingButtonPressed();
 
 	void AimingButtonReleased();
+
+	void CameraInterpolationZoom(float DeltaTime);
 };
