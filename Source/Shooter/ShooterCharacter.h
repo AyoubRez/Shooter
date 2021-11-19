@@ -44,6 +44,36 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
 	float BaseLookUpRate;
 
+	/** Randomized Fire Sound */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class USoundCue* FireSound;
+
+	/** Flash Spawned at Barrel Socket*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class UParticleSystem* MuzzleFlash;
+	/** Montage for firing the weapon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class UAnimMontage* HipFireMontage;
+
+
+	/** Particles Spawned about bullet impact */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UParticleSystem* ImpactParticles;
+
+	/** Smoke trail for bullets  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UParticleSystem* BeamParticles;
+
+	/** True when aiming  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bAiming;
+
+	/** Default Camera FOV value  */
+	float CameraDefaultFOV;
+
+	/** Zoomed Camera FOV value  */
+	float CameraZoomedFOV;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -68,4 +98,14 @@ protected:
 	 * @param Rate This is normalized rate , i.e.  1.0 means 100% of desired look up  rate
 	 */
 	void LookUpAtRate(float Rate);
+
+	/** Called when the FireButton Is Pressed*/
+	void FireWeapon();
+
+	bool GetBeamEndLocation(const FVector& MuzzleSocketEndLocation, FVector& OutBeamLocation);
+
+	/** Set bAiming to true or false */
+	void AimingButtonPressed();
+
+	void AimingButtonReleased();
 };
