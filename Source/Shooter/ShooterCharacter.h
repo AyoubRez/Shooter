@@ -142,6 +142,18 @@ private:
 
 	FTimerHandle CrossHairShootTimer;
 
+	//Left Mouse button or right console trigger pressed 
+	bool bFireButtonPressed;
+
+	//True When we can fire false when waiting for timer 
+	bool bShouldFire;
+
+	//Rate of automatic gun Fire 
+	float AutomaticFireRate;
+
+	//Set a timer between gun shots 
+	FTimerHandle AutoFireTimer;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -198,7 +210,16 @@ protected:
 	void CalculateCrossHairsSpread(float DeltaTime);
 
 	void StartCrossHairBulletFire();
-	
+
 	UFUNCTION()
 	void FinishCrossHairBulletFire();
+
+	void FireButtonPressed();
+
+	void FireButtonReleased();
+
+	void StartFireTimer();
+
+	UFUNCTION()
+	void AutoFireReset();
 };
