@@ -136,6 +136,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
 	float CrossHairShootingFactor;
 
+	float ShootTimeDuration;
+
+	bool bFiringBullet;
+
+	FTimerHandle CrossHairShootTimer;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -190,4 +196,9 @@ protected:
 	void SetLookRates();
 
 	void CalculateCrossHairsSpread(float DeltaTime);
+
+	void StartCrossHairBulletFire();
+	
+	UFUNCTION()
+	void FinishCrossHairBulletFire();
 };

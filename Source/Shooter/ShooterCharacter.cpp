@@ -45,7 +45,11 @@ AShooterCharacter::AShooterCharacter():
 	CrossHairVelocityFactor(0.f),
 	CrossHairInAirFactor(0.f),
 	CrossHairAimFactor(0.f),
-	CrossHairShootingFactor(0.f)
+	CrossHairShootingFactor(0.f),
+
+	//Bullet Fire Timer variables
+	ShootTimeDuration(0.05f),
+	bFiringBullet(false)
 
 
 {
@@ -243,6 +247,9 @@ void AShooterCharacter::FireWeapon()
 		AnimInstance->Montage_Play(HipFireMontage);
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
+
+	//Start Bullet Fire Timer for crossHairs
+	StartCrossHairBulletFire();
 }
 
 bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketEndLocation, FVector& OutBeamLocation)
@@ -258,7 +265,7 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketEndLocatio
 	// Get Screen Space Location of the crossHairs 
 	FVector2D CrossHairLocation{ViewPortSize.X / 2.f, ViewPortSize.Y / 2};
 
-	CrossHairLocation.Y -= 50.f;
+	//CrossHairLocation.Y -= 50.f;
 	FVector CrossHairWorldPosition;
 	FVector CrossHairWorldDirection;
 
@@ -377,5 +384,29 @@ void AShooterCharacter::CalculateCrossHairsSpread(float DeltaTime)
 		CrossHairAimFactor = FMath::FInterpTo(CrossHairAimFactor, 0.f, DeltaTime, 30.f);
 	}
 
-	CrossHairSpreadMultiplier = 0.5f + CrossHairVelocityFactor + CrossHairInAirFactor - CrossHairAimFactor;
+	//True 0.05s after firing 
+	if (bFiringBullet)
+	{
+		CrossHairShootingFactor = FMath::FInterpTo(CrossHairShootingFactor, 0.3f, DeltaTime, 60.f);
+	}
+	else
+	{
+		CrossHairShootingFactor = FMath::FInterpTo(CrossHairShootingFactor, 0.f, DeltaTime, 60.f);
+	}
+
+	CrossHairSpreadMultiplier = 0.5f + CrossHairVelocityFactor + CrossHairInAirFactor - CrossHairAimFactor +
+		CrossHairShootingFactor;
+}
+
+void AShooterCharacter::StartCrossHairBulletFire()
+{
+	bFiringBullet = true;
+
+	GetWorldTimerManager().SetTimer(CrossHairShootTimer, this, &AShooterCharacter::FinishCrossHairBulletFire,
+	                                ShootTimeDuration);
+}
+
+void AShooterCharacter::FinishCrossHairBulletFire()
+{
+	bFiringBullet = false;
 }
