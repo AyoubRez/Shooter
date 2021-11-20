@@ -116,6 +116,26 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	float ZoomInterpolationSpeed;
 
+	/** Determines the spread of the crossHairs   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
+	float CrossHairSpreadMultiplier;
+
+	/** Velocity component for crossHairs Spread   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
+	float CrossHairVelocityFactor;
+
+	/** In Air component for crossHairs Spread   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
+	float CrossHairInAirFactor;
+
+	/** Aim component for crossHairs Spread   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
+	float CrossHairAimFactor;
+
+	/** Shooting component for crossHairs Spread   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="CrossHairs", meta=(AllowPrivateAccess="true"))
+	float CrossHairShootingFactor;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -124,6 +144,10 @@ public:
 
 	/** Returns bAiming State */
 	FORCEINLINE bool GetAiming() const { return bAiming; }
+
+	/** Returns bAiming State */
+	UFUNCTION(BlueprintCallable)
+	float GetCrossHairSpreadMultiplier() const;
 
 protected:
 	//Called for forward / backwards Input
@@ -164,4 +188,6 @@ protected:
 
 	//Set Base Turn rate and Base Look up rate based on aiming 
 	void SetLookRates();
+
+	void CalculateCrossHairsSpread(float DeltaTime);
 };

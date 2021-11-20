@@ -92,6 +92,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	//Set Look rates Based on aiming
 	SetLookRates();
+
+	//Calculate crossHairSpread multiplier 
+	CalculateCrossHairsSpread(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -113,6 +116,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireWeapon);
 	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
+}
+
+float AShooterCharacter::GetCrossHairSpreadMultiplier() const
+{
+	return CrossHairSpreadMultiplier;
 }
 
 void AShooterCharacter::MoveForward(float Value)
@@ -322,4 +330,17 @@ void AShooterCharacter::SetLookRates()
 		BaseTurnRate = HipTurnRate;
 		BaseLookUpRate = HipLookUpRate;
 	}
+}
+
+void AShooterCharacter::CalculateCrossHairsSpread(float DeltaTime)
+{
+	FVector2D WalkSpeedRange{0.f, 600.f};
+	FVector2D VelocityMultiplierRange{0.f, 1.f};
+	FVector Velocity{GetVelocity()};
+	Velocity.Z = 0.f;
+
+	CrossHairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange,
+	                                                            Velocity.Size());
+
+	CrossHairSpreadMultiplier = 0.5f + CrossHairVelocityFactor;
 }
