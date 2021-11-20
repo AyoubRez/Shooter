@@ -44,6 +44,41 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
 	float BaseLookUpRate;
 
+	/** turn rate when not Aiming  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float HipTurnRate;
+
+	/** look up rate when not aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float HipLookUpRate;
+
+	/** turn rate when aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float AimingTurnRate;
+
+	/** look up rate when aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
+	float AimingLookUpRate;
+
+	/** Scale factor for mouse sensitivity Turn Rate when not aiming  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"),
+		meta=(ClampMin="0.0", ClampMax="1.0", UIMin="0.0", UIMax="1.0"))
+	float MouseHipTurnRate;
+
+	/** Scale factor for mouse sensitivity Look up Rate when not aiming  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"),
+		meta=(ClampMin="0.0", ClampMax="1.0", UIMin="0.0", UIMax="1.0"))
+	float MouseHipLookUpRate;
+
+	/** Scale factor for mouse sensitivity Turn Rate when  aiming  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"),
+		meta=(ClampMin="0.0", ClampMax="1.0", UIMin="0.0", UIMax="1.0"))
+	float MouseAimingTurnRate;
+
+	/** Scale factor for mouse sensitivity Look up Rate when  aiming  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"),
+		meta=(ClampMin="0.0", ClampMax="1.0", UIMin="0.0", UIMax="1.0"))
+	float MouseAimingLookUpRate;
 	/** Randomized Fire Sound */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	class USoundCue* FireSound;
@@ -109,6 +144,12 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	/** Rotate based on mouse x movement */
+	void Turn(float Value);
+
+	/** Rotate based on mouse Y movement */
+	void LookUp(float Value);
+
 	/** Called when the FireButton Is Pressed*/
 	void FireWeapon();
 
@@ -120,4 +161,7 @@ protected:
 	void AimingButtonReleased();
 
 	void CameraInterpolationZoom(float DeltaTime);
+
+	//Set Base Turn rate and Base Look up rate based on aiming 
+	void SetLookRates();
 };
