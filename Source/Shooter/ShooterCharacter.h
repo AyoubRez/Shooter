@@ -154,6 +154,16 @@ private:
 	//Set a timer between gun shots 
 	FTimerHandle AutoFireTimer;
 
+	//True if we should trace for every frame for items 
+	bool bShouldTraceForItems;
+
+	//Number of overlapped AItems 
+	int8 OverlappedItemCount;
+
+	//The AItem We hit last frame 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	class AItem* TraceHitItemLastFrame;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -166,6 +176,11 @@ public:
 	/** Returns bAiming State */
 	UFUNCTION(BlueprintCallable)
 	float GetCrossHairSpreadMultiplier() const;
+
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+
+	// Adds / subtracts to/from overlappedItemCount and Updates bShouldTraceForItems 
+	void IncrementOverlappedItemCount(int8 Amount);
 
 protected:
 	//Called for forward / backwards Input
@@ -222,7 +237,10 @@ protected:
 
 	UFUNCTION()
 	void AutoFireReset();
-	
+
 	/**  Line trace for items under the crossHairs */
-	bool TraceUnderCrossHair(FHitResult& OutHitResult);
+	bool TraceUnderCrossHair(FHitResult& OutHitResult, FVector& OutHitLocation);
+
+	//Trace for items if Overlapped items Count is greater than 0
+	void TraceForItems();
 };
