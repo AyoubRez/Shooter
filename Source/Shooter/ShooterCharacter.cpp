@@ -56,7 +56,10 @@ AShooterCharacter::AShooterCharacter():
 	//Automatic  fire variables 
 	AutomaticFireRate(0.1f),
 	bShouldFire(true),
-	bFireButtonPressed(false)
+	bFireButtonPressed(false),
+
+	//Item Trace Variables 
+	bShouldTraceForItems(false)
 
 
 {
@@ -116,19 +119,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 	//Calculate crossHairSpread multiplier 
 	CalculateCrossHairsSpread(DeltaTime);
 
-
-	//Trace under crossHairs
-	FHitResult ItemHitResult;
-	TraceUnderCrossHair(ItemHitResult);
-	if (ItemHitResult.bBlockingHit)
-	{
-		AItem* HitItem = Cast<AItem>(ItemHitResult.Actor);
-		if (HitItem && HitItem->GetPickUpWidget())
-		{
-			//Get hit item and set widget visibility
-			HitItem->GetPickUpWidget()->SetVisibility(true);
-		}
-	}
+	//Trace for items Function
+	TraceForItems();
 }
 
 // Called to bind functionality to input
@@ -160,6 +152,20 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 float AShooterCharacter::GetCrossHairSpreadMultiplier() const
 {
 	return CrossHairSpreadMultiplier;
+}
+
+void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
+{
+	if (OverlappedItemCount + Amount <= 0)
+	{
+		OverlappedItemCount = 0;
+		bShouldTraceForItems = false;
+	}
+	else
+	{
+		OverlappedItemCount += Amount;
+		bShouldTraceForItems = true;
+	}
 }
 
 void AShooterCharacter::MoveForward(float Value)
@@ -280,55 +286,33 @@ void AShooterCharacter::FireWeapon()
 
 bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketEndLocation, FVector& OutBeamLocation)
 {
-	//Get Current Size of the view Port 
-	FVector2D ViewPortSize;
+	//Check for CrossHair Trace Hit 
+	FHitResult CrossHairHitResult;
+	bool bCrossHairHit = TraceUnderCrossHair(CrossHairHitResult, OutBeamLocation);
 
-	if (GEngine && GEngine->GameViewport)
+
+	if (bCrossHairHit)
 	{
-		GEngine->GameViewport->GetViewportSize(ViewPortSize);
+		//Tentative beam location  - still need to trace from gun 
+		OutBeamLocation = CrossHairHitResult.Location;
+	}
+	else //no CrossHair trace hit 
+	{
+		//OutBeamLocation is the end location for the line trace 
 	}
 
-	// Get Screen Space Location of the crossHairs 
-	FVector2D CrossHairLocation{ViewPortSize.X / 2.f, ViewPortSize.Y / 2};
+	// Perform a second trace this time from the gun barrel
 
-	//CrossHairLocation.Y -= 50.f;
-	FVector CrossHairWorldPosition;
-	FVector CrossHairWorldDirection;
+	FHitResult WeaponTraceHit;
 
-	//Get World Position and direction of crossHairs
-	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this, 0),
-	                                                               CrossHairLocation,
-	                                                               CrossHairWorldPosition, CrossHairWorldDirection);
+	const FVector WeaponTraceStart{MuzzleSocketEndLocation};
+	const FVector StartToEnd{OutBeamLocation - MuzzleSocketEndLocation};
+	const FVector WeaponTraceEnd{MuzzleSocketEndLocation + StartToEnd * 1.25f};
+	GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
 
-	if (bScreenToWorld) //wad deProjection successful?
+	if (WeaponTraceHit.bBlockingHit) //Object between barrel and hit point
 	{
-		FHitResult ScreenTraceHit;
-		const FVector Start{CrossHairWorldPosition};
-		const FVector End{CrossHairWorldPosition + CrossHairWorldDirection * 50000.f};
-
-		//Set Beam end point to lineTraceSingleByChannel en point 
-		OutBeamLocation = End;
-		// Trace outward from crossHairs world Location 
-		GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
-
-		if (ScreenTraceHit.bBlockingHit) // was there a trace hit ?
-		{
-			//Beam is now trace hit location 
-			OutBeamLocation = ScreenTraceHit.Location;
-		}
-
-		// Perform a second trace this time from the gun barel
-
-		FHitResult WeaponTraceHit;
-
-		const FVector WeaponTraceStart{MuzzleSocketEndLocation};
-		const FVector WeaponTraceEnd{OutBeamLocation};
-		GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
-
-		if (WeaponTraceHit.bBlockingHit) //Object between barrel and hit point
-		{
-			OutBeamLocation = WeaponTraceHit.Location;
-		}
+		OutBeamLocation = WeaponTraceHit.Location;
 		return true;
 	}
 	return false;
@@ -467,7 +451,7 @@ void AShooterCharacter::AutoFireReset()
 	}
 }
 
-bool AShooterCharacter::TraceUnderCrossHair(FHitResult& OutHitResult)
+bool AShooterCharacter::TraceUnderCrossHair(FHitResult& OutHitResult, FVector& OutHitLocation)
 {
 	//Get Current Size of the view Port 
 	FVector2D ViewPortSize;
@@ -494,12 +478,52 @@ bool AShooterCharacter::TraceUnderCrossHair(FHitResult& OutHitResult)
 		//Trace from CrossHair world location outward
 		const FVector Start{CrossHairWorldPosition};
 		const FVector End{Start + CrossHairWorldDirection * 50000.f};
+		OutHitLocation = End;
 		GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_Visibility);
 
 		if (OutHitResult.bBlockingHit)
 		{
+			OutHitLocation = OutHitResult.Location;
 			return true;
 		}
 	}
 	return false;
+}
+
+void AShooterCharacter::TraceForItems()
+{
+	if (bShouldTraceForItems)
+	{
+		//Trace under crossHairs
+		FHitResult ItemHitResult;
+		FVector HitLocation;
+		TraceUnderCrossHair(ItemHitResult, HitLocation);
+		if (ItemHitResult.bBlockingHit)
+		{
+			AItem* HitItem = Cast<AItem>(ItemHitResult.Actor);
+
+			if (HitItem && HitItem->GetPickUpWidget())
+			{
+				//Get hit item and set widget visibility
+				HitItem->GetPickUpWidget()->SetVisibility(true);
+			}
+			//we hit a AItem last frame 
+			if (TraceHitItemLastFrame)
+			{
+				if (HitItem != TraceHitItemLastFrame)
+				{
+					//Hitting a different item or AItem is null 
+					TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
+				}
+			}
+			//Store a reference to hit item for next frame 
+			TraceHitItemLastFrame = HitItem;
+		}
+	}
+	else if (TraceHitItemLastFrame)
+	{
+		// no longer overlapping any items
+		//last item should not display widget
+		TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
+	}
 }
