@@ -38,7 +38,16 @@ AShooterCharacter::AShooterCharacter():
 	CameraDefaultFOV(0.f), //is gonna get set in begin play
 	CameraZoomedFOV(35.f),
 	ZoomInterpolationSpeed(20.f),
-	CameraCurrentFOV(0.f)
+	CameraCurrentFOV(0.f),
+
+	// CrossHair Spread Factors
+	CrossHairSpreadMultiplier(0.f),
+	CrossHairVelocityFactor(0.f),
+	CrossHairInAirFactor(0.f),
+	CrossHairAimFactor(0.f),
+	CrossHairShootingFactor(0.f)
+
+
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -334,6 +343,7 @@ void AShooterCharacter::SetLookRates()
 
 void AShooterCharacter::CalculateCrossHairsSpread(float DeltaTime)
 {
+	//Calculate CrossHair in Velocity factor 
 	FVector2D WalkSpeedRange{0.f, 600.f};
 	FVector2D VelocityMultiplierRange{0.f, 1.f};
 	FVector Velocity{GetVelocity()};
@@ -341,6 +351,31 @@ void AShooterCharacter::CalculateCrossHairsSpread(float DeltaTime)
 
 	CrossHairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange,
 	                                                            Velocity.Size());
+	//Calculate CrossHair in air factor 
+	if (GetCharacterMovement()->IsFalling())
+	{
+		// inAir
+		//Spread the cross hairs slowly while in air 
+		CrossHairInAirFactor = FMath::FInterpTo(CrossHairInAirFactor, 2.25f, DeltaTime, 2.25f);
+	}
+	else //on The ground
+	{
+		//Shrink the cross hairs rapidly while Landing 
+		CrossHairInAirFactor = FMath::FInterpTo(CrossHairInAirFactor, 0.f, DeltaTime, 30.f);
+	}
 
-	CrossHairSpreadMultiplier = 0.5f + CrossHairVelocityFactor;
+	//Calculate CrossHair aim factor 
+	if (bAiming)
+	{
+		// Aiming
+		//Shrink the cross hairs rapidly while aiming 
+		CrossHairAimFactor = FMath::FInterpTo(CrossHairAimFactor, 0.6f, DeltaTime, 30.f);
+	}
+	else // not Aiming
+	{
+		//Spread the cross hairs rapidly not aiming 
+		CrossHairAimFactor = FMath::FInterpTo(CrossHairAimFactor, 0.f, DeltaTime, 30.f);
+	}
+
+	CrossHairSpreadMultiplier = 0.5f + CrossHairVelocityFactor + CrossHairInAirFactor - CrossHairAimFactor;
 }
