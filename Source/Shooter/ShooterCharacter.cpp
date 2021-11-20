@@ -4,7 +4,9 @@
 #include "ShooterCharacter.h"
 
 #include "DrawDebugHelpers.h"
+#include "Item.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -113,6 +115,20 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	//Calculate crossHairSpread multiplier 
 	CalculateCrossHairsSpread(DeltaTime);
+
+
+	//Trace under crossHairs
+	FHitResult ItemHitResult;
+	TraceUnderCrossHair(ItemHitResult);
+	if (ItemHitResult.bBlockingHit)
+	{
+		AItem* HitItem = Cast<AItem>(ItemHitResult.Actor);
+		if (HitItem && HitItem->GetPickUpWidget())
+		{
+			//Get hit item and set widget visibility
+			HitItem->GetPickUpWidget()->SetVisibility(true);
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -449,4 +465,41 @@ void AShooterCharacter::AutoFireReset()
 	{
 		StartFireTimer();
 	}
+}
+
+bool AShooterCharacter::TraceUnderCrossHair(FHitResult& OutHitResult)
+{
+	//Get Current Size of the view Port 
+	FVector2D ViewPortSize;
+
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(ViewPortSize);
+	}
+
+	// Get Screen Space Location of the crossHairs 
+	FVector2D CrossHairLocation{ViewPortSize.X / 2.f, ViewPortSize.Y / 2};
+
+	//CrossHairLocation.Y -= 50.f;
+	FVector CrossHairWorldPosition;
+	FVector CrossHairWorldDirection;
+
+	//Get World Position and direction of crossHairs
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this, 0),
+	                                                               CrossHairLocation,
+	                                                               CrossHairWorldPosition, CrossHairWorldDirection);
+
+	if (bScreenToWorld)
+	{
+		//Trace from CrossHair world location outward
+		const FVector Start{CrossHairWorldPosition};
+		const FVector End{Start + CrossHairWorldDirection * 50000.f};
+		GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_Visibility);
+
+		if (OutHitResult.bBlockingHit)
+		{
+			return true;
+		}
+	}
+	return false;
 }

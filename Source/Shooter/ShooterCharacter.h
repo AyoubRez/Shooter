@@ -222,4 +222,7 @@ protected:
 
 	UFUNCTION()
 	void AutoFireReset();
+	
+	/**  Line trace for items under the crossHairs */
+	bool TraceUnderCrossHair(FHitResult& OutHitResult);
 };
