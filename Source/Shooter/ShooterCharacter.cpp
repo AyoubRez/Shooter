@@ -13,6 +13,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
+#include "Weapon.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 
 
 // Sets default values
@@ -103,6 +106,9 @@ void AShooterCharacter::BeginPlay()
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
+
+	//Spawn the default weapon and equip it to the mesh 
+	EquipWeapon(SpawnDefaultWeapon());
 }
 
 // Called every frame
@@ -525,5 +531,31 @@ void AShooterCharacter::TraceForItems()
 		// no longer overlapping any items
 		//last item should not display widget
 		TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
+	}
+}
+
+AWeapon* AShooterCharacter::SpawnDefaultWeapon()
+{
+	//Check subclass of variable 
+	if (DefaultWeaponClass)
+	{
+		//Spawn the weapon 
+		return GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+	}
+	return nullptr;
+}
+
+void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
+{
+	if (WeaponToEquip)
+	{
+		//Get the hand socket 
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if (HandSocket)
+		{
+			HandSocket->AttachActor(WeaponToEquip, GetMesh());
+		}
+		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
 }
