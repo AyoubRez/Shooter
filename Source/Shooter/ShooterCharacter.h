@@ -164,6 +164,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
 	class AItem* TraceHitItemLastFrame;
 
+	//Currently Equipped weapon 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class AWeapon* EquippedWeapon;
+
+	//Set in bp for the default weapon class 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<AWeapon> DefaultWeaponClass;
+
 public:
 	/** Returns Camera Boom subObject*/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -243,4 +251,10 @@ protected:
 
 	//Trace for items if Overlapped items Count is greater than 0
 	void TraceForItems();
+
+	//Spawns a default weapon and attach  it to the mesh  
+	AWeapon* SpawnDefaultWeapon();
+
+	// Takes a weapon and attach it to the mesh 
+	void EquipWeapon(AWeapon* WeaponToEquip);
 };

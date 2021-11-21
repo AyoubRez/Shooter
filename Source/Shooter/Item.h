@@ -6,6 +6,28 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+UENUM(BlueprintType)
+enum class EItemRarity:uint8
+{
+	EIR_Damaged UMETA(DisplayName="Damaged"),
+	EIR_Common UMETA(DisplayName="Common"),
+	EIR_Uncommon UMETA(DisplayName="Uncommon"),
+	EIR_Rare UMETA(DisplayName="Rare"),
+	EIR_Legendary UMETA(DisplayName="Legendary"),
+	EIR_Max UMETA(DisplayName="DefaultMAX")
+};
+
+UENUM(BlueprintType)
+enum class EItemState:uint8
+{
+	EIS_PickUp UMETA(DisplayName="PickUp"),
+	EIS_EquipInterping UMETA(DisplayName="EquipInterping"),
+	EIS_PickedUp UMETA(DisplayName="PickedUp"),
+	EIS_Equipped UMETA(DisplayName="Equipped"),
+	EIS_Falling UMETA(DisplayName="Falling"),
+	EIS_Max UMETA(DisplayName="DefaultMAX")
+};
+
 UCLASS()
 class SHOOTER_API AItem : public AActor
 {
@@ -22,13 +44,20 @@ protected:
 	// Called When Overlapping Area sphere 
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 	// Called When End Overlapping Area sphere 
 	UFUNCTION()
-	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                       int32 OtherBodyIndex);
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                        UPrimitiveComponent* OtherComp,
+	                        int32 OtherBodyIndex);
+
+	/** Sets the ActiveStars array of Bool s based on rarity */
+	void SetActiveStars();
+
+	/** Set Properties of the items component based on state */
+	void SetItemProperties(EItemState State);
 
 public:
 	// Called every frame
@@ -54,7 +83,45 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	FString ItemName;
 
+	// The Count of the item 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	int32 ItemCount;
+
+	// Item Rarity determines num of starts  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	EItemRarity ItemRarity;
+
+	// Item Rarity determines num of starts  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	TArray<bool> ActiveStars;
+
+	//  State od the item   
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	EItemState ItemState;
+
+	// Item rotation movement scale if pickup   
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float YawPerSecondRotation;
+
+	// Item translation movement scale if pickup    
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float YawPerSecondTranslation;
+
+	// Item translation movement scale if pickup    
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float TranslationOffset;
+
+	float RunningTime;
+
 
 public:
 	FORCEINLINE UWidgetComponent* GetPickUpWidget() const { return PickUpWidget; }
+
+	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
+
+	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
+
+	FORCEINLINE EItemState GetItemState() const { return ItemState; }
+
+	void SetItemState(EItemState State);
 };
