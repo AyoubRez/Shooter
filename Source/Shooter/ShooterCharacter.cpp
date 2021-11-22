@@ -14,12 +14,12 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 #include "Weapon.h"
-#include "Components/BoxComponent.h"
-#include "Components/SphereComponent.h"
 
 
 // Sets default values
 AShooterCharacter::AShooterCharacter():
+
+#pragma region Variable Initialization
 
 	//Base Rates Turn/lookUp
 	BaseTurnRate(45.f),
@@ -30,12 +30,13 @@ AShooterCharacter::AShooterCharacter():
 	HipLookUpRate(90.F),
 	AimingTurnRate(20.f),
 	AimingLookUpRate(20.f),
-	//Mouse Look Sensitivity scale factore 
 
+	//Mouse Look Sensitivity scale factor
 	MouseHipTurnRate(1.0f),
 	MouseAimingLookUpRate(0.2f),
 	MouseHipLookUpRate(1.0f),
 	MouseAimingTurnRate(0.2f),
+
 	// true when aiming the weapon 
 	bAiming(false),
 
@@ -64,6 +65,7 @@ AShooterCharacter::AShooterCharacter():
 	//Item Trace Variables 
 	bShouldTraceForItems(false)
 
+#pragma endregion
 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -103,6 +105,12 @@ void AShooterCharacter::BeginPlay()
 
 	if (FollowCamera)
 	{
+		/** If Follow Camera Exists
+			* Set CameraDefaultFOV
+			* to FollowCamera FieldOfView
+			* and CameraCurrentFOV
+			* to CameraDefaultFOV
+			*/
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
@@ -143,9 +151,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AShooterCharacter::LookUpAtRate);
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
 	PlayerInputComponent->BindAxis("LookUp", this, &AShooterCharacter::LookUp);
+
 	//Jump Binding 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
 	//Fire Binding
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireButtonPressed);
 	PlayerInputComponent->BindAction("FireButton", IE_Released, this, &AShooterCharacter::FireButtonReleased);
@@ -157,13 +167,16 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 float AShooterCharacter::GetCrossHairSpreadMultiplier() const
 {
+	// Getter for @param CrossHairSpreadMultiplier
 	return CrossHairSpreadMultiplier;
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
 {
+	// If no Element is Overlapping
 	if (OverlappedItemCount + Amount <= 0)
 	{
+		// Set OverlappedItemCount to 0 and Disable trace for Items
 		OverlappedItemCount = 0;
 		bShouldTraceForItems = false;
 	}
@@ -184,6 +197,7 @@ void AShooterCharacter::MoveForward(float Value)
 		const FRotator YawRotation{0, Rotation.Yaw, 0};
 		const FVector Direction{FRotationMatrix{YawRotation}.GetUnitAxis(EAxis::X)};
 
+		//Add Movement following that Direction 
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -198,6 +212,7 @@ void AShooterCharacter::MoveRight(float Value)
 		const FRotator YawRotation{0, Rotation.Yaw, 0};
 		const FVector Direction{FRotationMatrix{YawRotation}.GetUnitAxis(EAxis::Y)};
 
+		//Add Movement Following the Direction 
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -246,29 +261,37 @@ void AShooterCharacter::FireWeapon()
 {
 	if (FireSound)
 	{
+		// if FireSound Play that sound
 		UGameplayStatics::PlaySound2D(this, FireSound);
 	}
+
 	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 
 	if (BarrelSocket)
 	{
+		// If Barrel Socket Get transform
 		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
 
 		if (MuzzleFlash)
 		{
+			// if MuzzleFlash Spawn it at barrelSocket location with transform 
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
 
 		FVector BeamEnd;
+		// Get Beam end Location 
 		bool bBeamEnd = GetBeamEndLocation(SocketTransform.GetLocation(), BeamEnd);
 
 		if (bBeamEnd)
 		{
+			// if Beam end location found 
 			if (ImpactParticles)
 			{
+				// If Impact Particles Spawn them at beam end location 
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamEnd);
 			}
 
+			// Spawn Beam particles along the X of the socket transform until the BeamEnd location 
 			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
 				GetWorld(), BeamParticles, SocketTransform);
 
@@ -279,6 +302,7 @@ void AShooterCharacter::FireWeapon()
 		}
 	}
 
+	// Play the recoil anime instance 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && HipFireMontage)
 	{
@@ -367,8 +391,8 @@ void AShooterCharacter::SetLookRates()
 void AShooterCharacter::CalculateCrossHairsSpread(float DeltaTime)
 {
 	//Calculate CrossHair in Velocity factor 
-	FVector2D WalkSpeedRange{0.f, 600.f};
-	FVector2D VelocityMultiplierRange{0.f, 1.f};
+	const FVector2D WalkSpeedRange{0.f, 600.f};
+	const FVector2D VelocityMultiplierRange{0.f, 1.f};
 	FVector Velocity{GetVelocity()};
 	Velocity.Z = 0.f;
 

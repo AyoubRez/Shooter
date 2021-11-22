@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+// Enumeration Region 
+#pragma region  Enumerations 
 UENUM(BlueprintType)
 enum class EItemRarity:uint8
 {
@@ -27,6 +29,7 @@ enum class EItemState:uint8
 	EIS_Falling UMETA(DisplayName="Falling"),
 	EIS_Max UMETA(DisplayName="DefaultMAX")
 };
+#pragma endregion
 
 UCLASS()
 class SHOOTER_API AItem : public AActor
@@ -38,6 +41,7 @@ public:
 	AItem();
 
 protected:
+#pragma  region  protected Methodes
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -58,12 +62,16 @@ protected:
 
 	/** Set Properties of the items component based on state */
 	void SetItemProperties(EItemState State);
+#pragma  endregion 
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	// Item Components 
+#pragma region Item Components
+	
 	/** Skeletal Mesh for the item */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	class USkeletalMeshComponent* ItemSkeletalMesh;
@@ -98,23 +106,11 @@ private:
 	//  State od the item   
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	EItemState ItemState;
-
-	// Item rotation movement scale if pickup   
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
-	float YawPerSecondRotation;
-
-	// Item translation movement scale if pickup    
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
-	float YawPerSecondTranslation;
-
-	// Item translation movement scale if pickup    
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
-	float TranslationOffset;
-
-	float RunningTime;
-
+#pragma  endregion 
 
 public:
+#pragma  region Getters
+	
 	FORCEINLINE UWidgetComponent* GetPickUpWidget() const { return PickUpWidget; }
 
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
@@ -122,6 +118,11 @@ public:
 	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
 
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
+	
+#pragma endregion
+#pragma region Setters
 
 	void SetItemState(EItemState State);
+	
+#pragma endregion 
 };
