@@ -159,6 +159,7 @@ void AItem::SetItemProperties(EItemState State)
 		// If A PickUp
 		/* Set SkeletalMesh properties: */
 		ItemSkeletalMesh->SetSimulatePhysics(false);
+		ItemSkeletalMesh->SetEnableGravity(false);
 		ItemSkeletalMesh->SetVisibility(true);
 		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -173,10 +174,11 @@ void AItem::SetItemProperties(EItemState State)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		break;
 	case EItemState::EIS_Equipped:
-
+		PickUpWidget->SetVisibility(false);
 		// If Equipped
 		/* Set SkeletalMesh Properties*/
 		ItemSkeletalMesh->SetSimulatePhysics(false);
+		ItemSkeletalMesh->SetEnableGravity(false);
 		ItemSkeletalMesh->SetVisibility(true);
 		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -189,9 +191,24 @@ void AItem::SetItemProperties(EItemState State)
 		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
+	case EItemState::EIS_Falling:
+		// Set Mesh Properties
+		ItemSkeletalMesh->SetSimulatePhysics(true);
+		ItemSkeletalMesh->SetEnableGravity(true);
+		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemSkeletalMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
+		//Set AreaSphere properties 
+		AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Set Collision Box properties
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
 		/* TODO : Finish All Cases */
-		
+
 		/* FIXME Add Cases Here please */
 
 	default:

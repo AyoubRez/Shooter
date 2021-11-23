@@ -198,6 +198,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;
 
+	//The Item currently hit by our trace in trace for items can be null 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	AItem* TraceHitItem;
+
 #pragma endregion
 
 #pragma endregion
@@ -338,6 +342,18 @@ protected:
 	// Takes a weapon and attach it to the mesh 
 	void EquipWeapon(AWeapon* WeaponToEquip);
 
+	//Drop weapon and let ot fall to the ground function 
+	void DropWeapon();
+
+	//Drops currently equipped weapon and equips trace hit weapon is not null 
+	void SwapWeapon(AWeapon* WeaponToSwap);
+
+#pragma endregion
+
+	/* Interaction button functions */
+#pragma region Interaction
+	void SelectButtonPressed();
+	void SelectButtonReleased();
 #pragma endregion
 
 #pragma endregion

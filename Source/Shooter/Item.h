@@ -7,7 +7,7 @@
 #include "Item.generated.h"
 
 // Enumeration Region 
-#pragma region  Enumerations 
+#pragma region  Enumerations
 UENUM(BlueprintType)
 enum class EItemRarity:uint8
 {
@@ -62,7 +62,7 @@ protected:
 
 	/** Set Properties of the items component based on state */
 	void SetItemProperties(EItemState State);
-#pragma  endregion 
+#pragma  endregion
 
 public:
 	// Called every frame
@@ -71,7 +71,7 @@ public:
 private:
 	// Item Components 
 #pragma region Item Components
-	
+
 	/** Skeletal Mesh for the item */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	class USkeletalMeshComponent* ItemSkeletalMesh;
@@ -106,11 +106,11 @@ private:
 	//  State od the item   
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	EItemState ItemState;
-#pragma  endregion 
+#pragma  endregion
 
 public:
 #pragma  region Getters
-	
+
 	FORCEINLINE UWidgetComponent* GetPickUpWidget() const { return PickUpWidget; }
 
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
@@ -118,11 +118,13 @@ public:
 	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
 
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
-	
+
+	FORCEINLINE USkeletalMeshComponent* GetItemSkeletalMesh() const { return ItemSkeletalMesh; }
+
 #pragma endregion
 #pragma region Setters
 
 	void SetItemState(EItemState State);
-	
-#pragma endregion 
+
+#pragma endregion
 };
