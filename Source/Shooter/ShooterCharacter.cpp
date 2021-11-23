@@ -163,6 +163,10 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	//Aiming Binding
 	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
+
+	//Select Binding
+	PlayerInputComponent->BindAction("Select", IE_Pressed, this, &AShooterCharacter::SelectButtonPressed);
+	PlayerInputComponent->BindAction("Select", IE_Released, this, &AShooterCharacter::SelectButtonReleased);
 }
 
 float AShooterCharacter::GetCrossHairSpreadMultiplier() const
@@ -530,24 +534,24 @@ void AShooterCharacter::TraceForItems()
 		TraceUnderCrossHair(ItemHitResult, HitLocation);
 		if (ItemHitResult.bBlockingHit)
 		{
-			AItem* HitItem = Cast<AItem>(ItemHitResult.Actor);
+			TraceHitItem = Cast<AItem>(ItemHitResult.Actor);
 
-			if (HitItem && HitItem->GetPickUpWidget())
+			if (TraceHitItem && TraceHitItem->GetPickUpWidget())
 			{
 				//Get hit item and set widget visibility
-				HitItem->GetPickUpWidget()->SetVisibility(true);
+				TraceHitItem->GetPickUpWidget()->SetVisibility(true);
 			}
 			//we hit a AItem last frame 
 			if (TraceHitItemLastFrame)
 			{
-				if (HitItem != TraceHitItemLastFrame)
+				if (TraceHitItem != TraceHitItemLastFrame)
 				{
 					//Hitting a different item or AItem is null 
 					TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
 				}
 			}
 			//Store a reference to hit item for next frame 
-			TraceHitItemLastFrame = HitItem;
+			TraceHitItemLastFrame = TraceHitItem;
 		}
 	}
 	else if (TraceHitItemLastFrame)
@@ -582,4 +586,38 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
+}
+
+void AShooterCharacter::DropWeapon()
+{
+	if (EquippedWeapon)
+	{
+		const FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		EquippedWeapon->GetItemSkeletalMesh()->DetachFromComponent(DetachmentTransformRules);
+
+		EquippedWeapon->SetItemState(EItemState::EIS_Falling);
+
+		EquippedWeapon->ThrowWeapon();
+	}
+}
+
+void AShooterCharacter::SwapWeapon(AWeapon* WeaponToSwap)
+{
+	DropWeapon();
+	EquipWeapon(WeaponToSwap);
+	TraceHitItem = nullptr;
+	TraceHitItemLastFrame = nullptr;
+}
+
+void AShooterCharacter::SelectButtonPressed()
+{
+	if (TraceHitItem)
+	{
+		auto TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
+		SwapWeapon(TraceHitWeapon);
+	}
+}
+
+void AShooterCharacter::SelectButtonReleased()
+{
 }
