@@ -63,7 +63,11 @@ AShooterCharacter::AShooterCharacter():
 	bFireButtonPressed(false),
 
 	//Item Trace Variables 
-	bShouldTraceForItems(false)
+	bShouldTraceForItems(false),
+
+	//Camera Interp locations  Variables 
+	CameraInterpDistance(250.f),
+	CameraInterpElevation(65.f)
 
 #pragma endregion
 
@@ -173,6 +177,29 @@ float AShooterCharacter::GetCrossHairSpreadMultiplier() const
 {
 	// Getter for @param CrossHairSpreadMultiplier
 	return CrossHairSpreadMultiplier;
+}
+
+/**Return Camera interp Location witch
+ *is the Desired Location And it s public
+ *so we can call it in the item class when we want to */
+FVector AShooterCharacter::GetCameraInterpLocation()
+{
+	//Get Follow Camera world Location 
+	const FVector CameraWorldLocation{FollowCamera->GetComponentLocation()};
+
+	//Get Forward Vector 
+	const FVector CameraForward{FollowCamera->GetForwardVector()};
+
+	return CameraWorldLocation + CameraForward * CameraInterpDistance + FVector(0.f, 0.f, CameraInterpElevation);
+}
+
+void AShooterCharacter::GetPickUpItem(AItem* Item)
+{
+	auto Weapon = Cast<AWeapon>(Item);
+	if (Weapon)
+	{
+		SwapWeapon(Weapon);
+	}
 }
 
 void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
@@ -613,8 +640,7 @@ void AShooterCharacter::SelectButtonPressed()
 {
 	if (TraceHitItem)
 	{
-		auto TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
-		SwapWeapon(TraceHitWeapon);
+		TraceHitItem->StartItemCurve(this);
 	}
 }
 

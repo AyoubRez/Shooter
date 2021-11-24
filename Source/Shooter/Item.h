@@ -62,6 +62,13 @@ protected:
 
 	/** Set Properties of the items component based on state */
 	void SetItemProperties(EItemState State);
+
+	/** Called when Item interp timer is finished  */
+	void FinishInterping();
+
+	//Handles Item Interpolation when in EquipItemInterping state 
+	void ItemInterp(float DeltaTime);
+
 #pragma  endregion
 
 public:
@@ -106,6 +113,45 @@ private:
 	//  State od the item   
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	EItemState ItemState;
+
+	//  the Curve asset to use for the items Z location when interping   
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	class UCurveFloat* ItemZCurve;
+
+	//  Starting Location when interping begins  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	FVector ItemInterpStartLocation;
+
+	//  Target interp location in front of the camera 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	FVector CameraTargetLocation;
+
+	//  true when interping  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	bool bInterping;
+
+	//Play when we start interping 
+	FTimerHandle ItemInterpTimer;
+
+	//  Duration if the curve of the timer   
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float ZCurveTime;
+
+	//  Pointer to the character  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	class AShooterCharacter* Character;
+
+// X and Y for the item while interping in the EquipeInterping state 
+	float ItemInterpX;
+	float ItemInterpY;
+
+	//Initial Yaw offset between the camera and the interping item 
+	float InterpInitialYawOffset;
+	
+	//  the Curve asset used to scale the item  when interping   
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	UCurveFloat* ItemScaleCurve;
+
 #pragma  endregion
 
 public:
@@ -126,5 +172,9 @@ public:
 
 	void SetItemState(EItemState State);
 
+#pragma endregion
+#pragma region Interping
+	/** Called from the AShooterCharacter class  */
+	void StartItemCurve(AShooterCharacter* Char);
 #pragma endregion
 };

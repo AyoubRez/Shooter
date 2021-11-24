@@ -102,6 +102,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	bool bAiming;
 
+
 #pragma endregion
 
 	/* Firing Components  */
@@ -204,6 +205,18 @@ private:
 
 #pragma endregion
 
+#pragma region Interpolation Variables
+
+	/** Distance outward from the camera for the interp destination   */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	float CameraInterpDistance;
+
+	/** Distance Upward from the camera for the interp destination   */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	float CameraInterpElevation;
+
+#pragma endregion
+
 #pragma endregion
 
 public:
@@ -225,6 +238,10 @@ public:
 	float GetCrossHairSpreadMultiplier() const;
 
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+
+	FVector GetCameraInterpLocation();
+
+	void GetPickUpItem(AItem* Item);
 
 #pragma  endregion
 
