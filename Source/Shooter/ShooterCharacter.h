@@ -6,6 +6,30 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+
+#pragma region  Enumerations
+
+UENUM(BlueprintType)
+enum class EAmmoType:uint8
+{
+	EAT_9mm UMETA(DisplayName="9mm"),
+	EAT_AR UMETA(DisplayName="Assult Rifle"),
+
+	EAT_MAX UMETA(DisplayName="Default Max")
+};
+
+UENUM(BlueprintType)
+enum class ECombatState :uint8
+{
+	ECS_Unoccupied UMETA(DisplayName="Unoccupied"),
+	ECS_FireTimerInProgress UMETA(DisplayName="FireTimerInProgress"),
+	ECS_Reloading UMETA(DisplayName="Reloading "),
+
+	ECS_MAX UMETA(DisplayName="Default Max")
+};
+
+#pragma endregion
+
 UCLASS()
 class SHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -217,6 +241,31 @@ private:
 
 #pragma endregion
 
+#pragma  region Ammo Variables
+
+	/** Map to keep track of ammo of the different ammo types  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	TMap<EAmmoType, int32> AmmoMap;
+
+	/** Starting Amount of 9mm ammo   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Items", meta=(AllowPrivateAccess="true"))
+	int32 Starting9mmAmmo;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Items", meta=(AllowPrivateAccess="true"))
+	int32 StartingARAmmo;
+
+#pragma endregion
+
+#pragma  region Combat State
+
+	/** Combat State can only fire or reload when unoccupied  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	ECombatState CombatState;
+
+
+#pragma endregion
+
 #pragma endregion
 
 public:
@@ -306,6 +355,12 @@ protected:
 	UFUNCTION()
 	void AutoFireReset();
 
+	void PlayFireSound();
+
+	void SendBullet();
+
+	void PlayGunFireMontage();
+
 #pragma endregion
 
 	/* Camera Functions */
@@ -371,6 +426,17 @@ protected:
 #pragma region Interaction
 	void SelectButtonPressed();
 	void SelectButtonReleased();
+#pragma endregion
+
+	/* Ammo Functions Region */
+#pragma region Ammo Functions
+
+	// Initialize the ammo map with ammo values 
+	void InitializeAmmoMap();
+
+	// Check to make sure our weapon has ammo 
+	bool WeaponHasAmmo();
+
 #pragma endregion
 
 #pragma endregion

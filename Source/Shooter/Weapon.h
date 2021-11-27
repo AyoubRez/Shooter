@@ -32,7 +32,17 @@ private:
 
 	// True if is Falling 
 	bool bFalling;
+
+	/* Ammo Count for this weapon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	int32 Ammo;
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
+
+	FORCEINLINE int32 GetAmmo() const { return Ammo; }
+
+	// Called from character class when firing weapon 
+	void DecrementAmmo();
 };
