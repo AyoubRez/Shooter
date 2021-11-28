@@ -107,6 +107,9 @@ AShooterCharacter::AShooterCharacter():
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f); //At this Rotation Rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	//Create Hand scene component 
+	HandSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("HandSceneComp"));
 }
 
 // Called when the game starts or when spawned
@@ -207,6 +210,10 @@ FVector AShooterCharacter::GetCameraInterpLocation()
 
 void AShooterCharacter::GetPickUpItem(AItem* Item)
 {
+	if (Item->GetEquipSound())
+	{
+		UGameplayStatics::PlaySound2D(this, Item->GetEquipSound());
+	}
 	auto Weapon = Cast<AWeapon>(Item);
 	if (Weapon)
 	{
@@ -686,6 +693,10 @@ void AShooterCharacter::SelectButtonPressed()
 	if (TraceHitItem)
 	{
 		TraceHitItem->StartItemCurve(this);
+		if (TraceHitItem->GetPickupSound())
+		{
+			UGameplayStatics::PlaySound2D(this, TraceHitItem->GetPickupSound());
+		}
 	}
 }
 
@@ -774,4 +785,28 @@ void AShooterCharacter::FinishReloading()
 		// Update ammo type with the CarriedAmmo 
 		AmmoMap.Add(AmmoType, CarriedAmmo);
 	}
+}
+
+void AShooterCharacter::GrabClip()
+{
+	if (EquippedWeapon == nullptr)return;
+
+	//Index for the clip bone of the equipped weapon 
+	int32 ClipBoneIndex{EquippedWeapon->GetItemSkeletalMesh()->GetBoneIndex(EquippedWeapon->GetClipBoneName())};
+
+	//Store the transform of the clip 
+	ClipTransform = EquippedWeapon->GetItemSkeletalMesh()->GetBoneTransform(ClipBoneIndex);
+
+	const FAttachmentTransformRules AttachmentRules(EAttachmentRule::KeepRelative, true);
+
+	if (HandSceneComponent == nullptr) return;
+	HandSceneComponent->AttachToComponent(GetMesh(), AttachmentRules, FName(TEXT("hand_l")));
+	HandSceneComponent->SetWorldTransform(ClipTransform);
+
+	EquippedWeapon->SetMovingClip(true);
+}
+
+void AShooterCharacter::ReleaseClip()
+{
+	EquippedWeapon->SetMovingClip(false);
 }

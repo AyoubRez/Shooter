@@ -263,6 +263,14 @@ private:
 	/** Montage For Reload Animations   */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	UAnimMontage* ReloadMontage;
+	
+	/** Transform of the clip when we first grab the clip when reloading    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	FTransform ClipTransform;
+
+	/** Scene Component to attach to the characters Hand during reloading     */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	USceneComponent* HandSceneComponent;
 
 #pragma endregion
 
@@ -452,6 +460,14 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+
+	//Called from animation Blueprint with GrabClip notify
+	UFUNCTION(BlueprintCallable)
+	void GrabClip();
+
+	//Called from animation Blueprint with ReplaceClip notify
+	UFUNCTION(BlueprintCallable)
+	void ReleaseClip();
 
 #pragma endregion
 

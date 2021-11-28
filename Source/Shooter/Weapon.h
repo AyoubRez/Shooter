@@ -68,6 +68,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
 	FName ReloadMontageSection;
 
+	/** True When reloading */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	bool bMovingClip;
+
+	/* FName for the Clip Bone    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	FName ClipBoneName;
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
@@ -86,4 +94,8 @@ public:
 	FORCEINLINE FName GetReloadMontageSection() const { return ReloadMontageSection; }
 
 	void ReloadAmmo(int32 Amount);
+
+	FORCEINLINE FName GetClipBoneName() const { return ClipBoneName; }
+
+	FORCEINLINE void SetMovingClip(bool Move) { bMovingClip = Move; }
 };
