@@ -141,16 +141,24 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	class AShooterCharacter* Character;
 
-// X and Y for the item while interping in the EquipeInterping state 
+	// X and Y for the item while interping in the EquipeInterping state 
 	float ItemInterpX;
 	float ItemInterpY;
 
 	//Initial Yaw offset between the camera and the interping item 
 	float InterpInitialYawOffset;
-	
+
 	//  the Curve asset used to scale the item  when interping   
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* ItemScaleCurve;
+
+	//  The sound played when item is pickedUp  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	class USoundCue* PickUpSound;
+
+	//  The sound played when item is Equipped 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	USoundCue* EquipSound;
 
 #pragma  endregion
 
@@ -166,6 +174,11 @@ public:
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
 
 	FORCEINLINE USkeletalMeshComponent* GetItemSkeletalMesh() const { return ItemSkeletalMesh; }
+
+	FORCEINLINE USoundCue* GetPickupSound() const { return PickUpSound; }
+
+	FORCEINLINE USoundCue* GetEquipSound() const { return EquipSound; }
+
 
 #pragma endregion
 #pragma region Setters
