@@ -6,6 +6,19 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+UShooterAnimInstance::UShooterAnimInstance():
+	Speed(0.f),
+	bIsInAir(false),
+	bIsAccelerating(false),
+	MovementOffsetYaw(0.f),
+	LastMovementOffsetYaw(0.f),
+	bAiming(false),
+	CharacterYaw(0.f),
+	CharacterYawLastFrame(0.f),
+	RootYawOffset(0.f)
+{
+}
+
 void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
 	if (ShooterCharacter == nullptr)
@@ -46,6 +59,7 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		}
 		bAiming = ShooterCharacter->GetAiming();
 	}
+	TurnInPlace();
 }
 
 void UShooterAnimInstance::NativeInitializeAnimation()
@@ -53,4 +67,53 @@ void UShooterAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	ShooterCharacter = Cast<AShooterCharacter>(TryGetPawnOwner());
+}
+
+void UShooterAnimInstance::TurnInPlace()
+{
+	if (ShooterCharacter == nullptr) return;
+
+	Pitch = ShooterCharacter->GetBaseAimRotation().Pitch;
+	
+	if (Speed > 0.f)
+	{
+		// Dont want to turn in place character is moving
+		RootYawOffset = 0.f;
+		CharacterYaw = ShooterCharacter->GetActorRotation().Yaw;
+		CharacterYawLastFrame = CharacterYaw;
+		RotationCurve = 0.f;
+		RotationCurveLastFrame = 0.f;
+	}
+	else
+	{
+		CharacterYawLastFrame = CharacterYaw;
+		CharacterYaw = ShooterCharacter->GetActorRotation().Yaw;
+
+		const float YawDelta{CharacterYaw - CharacterYawLastFrame};
+
+		// Root Yaw offset updated and clamped to [-180, 180] 
+		RootYawOffset = UKismetMathLibrary::NormalizeAxis(RootYawOffset - YawDelta);
+
+		const float Turning{GetCurveValue(TEXT("Turning"))};
+
+		// 1.0  if Turning 0.0 if not 
+		if (Turning > 0)
+		{
+			RotationCurveLastFrame = RotationCurve;
+			RotationCurve = GetCurveValue(TEXT("Rotation"));
+
+			const float DeltaRotation{RotationCurve - RotationCurveLastFrame};
+
+			// Root Yaw offset >0 means turning left  Root Yaw offset <0 turning Right
+			RootYawOffset > 0 ? RootYawOffset -= DeltaRotation : RootYawOffset += DeltaRotation;
+
+			const float ABSRootYawOffset{FMath::Abs(RootYawOffset)};
+
+			if (ABSRootYawOffset > 90.f)
+			{
+				const float YawExcess{ABSRootYawOffset - 90.f};
+				RootYawOffset > 0 ? RootYawOffset -= YawExcess : RootYawOffset += YawExcess;
+			}
+		}
+	}
 }
