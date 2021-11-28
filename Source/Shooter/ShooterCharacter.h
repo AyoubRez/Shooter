@@ -4,19 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AmmoType.h"
 #include "ShooterCharacter.generated.h"
 
 
 #pragma region  Enumerations
-
-UENUM(BlueprintType)
-enum class EAmmoType:uint8
-{
-	EAT_9mm UMETA(DisplayName="9mm"),
-	EAT_AR UMETA(DisplayName="Assult Rifle"),
-
-	EAT_MAX UMETA(DisplayName="Default Max")
-};
 
 UENUM(BlueprintType)
 enum class ECombatState :uint8
@@ -266,6 +258,14 @@ private:
 
 #pragma endregion
 
+#pragma region Reload Variables
+
+	/** Montage For Reload Animations   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UAnimMontage* ReloadMontage;
+
+#pragma endregion
+
 #pragma endregion
 
 public:
@@ -436,6 +436,22 @@ protected:
 
 	// Check to make sure our weapon has ammo 
 	bool WeaponHasAmmo();
+
+	// Checks to see if we have ammo ef the equipped Weapon 's ammo type  
+	bool CarryingAmmo();
+
+#pragma endregion
+
+	/* Reload Button Functions */
+#pragma region Reload
+
+	void ReloadButtonPressed();
+
+	// Handle Reload of the weapon 
+	void ReloadWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
 
 #pragma endregion
 

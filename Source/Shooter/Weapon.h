@@ -3,9 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AmmoType.h"
 #include "Item.h"
 #include "Weapon.generated.h"
 
+
+#pragma region Enumerations
+
+UENUM(BlueprintType)
+enum class EWeaponType:uint8
+{
+	EWT_SubmachineGun UMETA(DisplayName="SubmachineGun"),
+	EWT_AssaultRifle UMETA(DisplayName="AssaultRifle"),
+	EWT_MAX UMETA(DisplayName="Default MAX"),
+};
+
+#pragma endregion
 /**
  * 
  */
@@ -37,12 +50,40 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
 	int32 Ammo;
 
+
+	/* Maximum Ammo That Our weapon can hold */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	int32 MagazineCapacity;
+
+	/* The Type of weapon  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	EWeaponType WeaponType;
+
+	/* The Type of Ammo for this weapon   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	EAmmoType AmmoType;
+
+
+	/* FName for the reload montage section    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	FName ReloadMontageSection;
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
 
 	FORCEINLINE int32 GetAmmo() const { return Ammo; }
 
+	FORCEINLINE int32 GetMagazineCapacity() const { return MagazineCapacity; }
+
 	// Called from character class when firing weapon 
 	void DecrementAmmo();
+
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+
+	FORCEINLINE EAmmoType GetAmmoType() const { return AmmoType; }
+
+	FORCEINLINE FName GetReloadMontageSection() const { return ReloadMontageSection; }
+
+	void ReloadAmmo(int32 Amount);
 };
