@@ -263,7 +263,7 @@ private:
 	/** Montage For Reload Animations   */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	UAnimMontage* ReloadMontage;
-	
+
 	/** Transform of the clip when we first grab the clip when reloading    */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	FTransform ClipTransform;
@@ -299,6 +299,8 @@ public:
 	FVector GetCameraInterpLocation();
 
 	void GetPickUpItem(AItem* Item);
+
+	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
 
 #pragma  endregion
 
