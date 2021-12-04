@@ -35,9 +35,13 @@ public:
 
 	virtual void NativeInitializeAnimation() override;
 
+
 protected:
 	/** Handle turning in place variables */
 	void TurnInPlace();
+
+	/** Handle Calculations for leaning while running */
+	void Lean(float DeltaTime);
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
@@ -65,11 +69,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
 	bool bAiming;
 
-	/** Yaw of  the Character this frame   */
-	float CharacterYaw;
+	/** Yaw of  the Character this frame only updated when standing still   */
+	float TIPCharacterYaw;
 
-	/** Yaw of  the Character the previous frame   */
-	float CharacterYawLastFrame;
+	/** Yaw of  the Character the previous frame  only updated when standing still  */
+	float TIPCharacterYawLastFrame;
 
 	/** Yaw of  the Character the previous frame   */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn in place", meta=(AllowPrivateAccess="true"))
@@ -94,4 +98,18 @@ private:
 	/** offsetState used to determine which offset to use    */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Turn in place", meta=(AllowPrivateAccess="true"))
 	EOffsetState OffsetState;
+
+	/**Character Yaw this frame */
+	FRotator CharacterRotation;
+
+	/**Character Yaw last frame */
+	FRotator CharacterRotationLastFrame;
+
+	/** Yaw delta used for leaning in running blend space     */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Lean", meta=(AllowPrivateAccess="true"))
+	float YawDelta;
+
+	/* True when crouching */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Crouching", meta=(AllowPrivateAccess="true"))
+	bool bCrouching;
 };
