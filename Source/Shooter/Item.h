@@ -29,6 +29,14 @@ enum class EItemState:uint8
 	EIS_Falling UMETA(DisplayName="Falling"),
 	EIS_Max UMETA(DisplayName="DefaultMAX")
 };
+
+UENUM(BlueprintType)
+enum class EItemType:uint8
+{
+	EIT_Ammo UMETA(DisplayName="Ammo"),
+	EIT_Weapon UMETA(DisplayName="Weapon"),
+	EIT_Max UMETA(DisplayName="DefaultMAX")
+};
 #pragma endregion
 
 UCLASS()
@@ -61,13 +69,20 @@ protected:
 	void SetActiveStars();
 
 	/** Set Properties of the items component based on state */
-	void SetItemProperties(EItemState State);
+	virtual void SetItemProperties(EItemState State);
 
 	/** Called when Item interp timer is finished  */
 	void FinishInterping();
 
 	//Handles Item Interpolation when in EquipItemInterping state 
 	void ItemInterp(float DeltaTime);
+
+	//Get InterpLocation based on the item type 
+	FVector GetInterpLocation();
+
+	void PlayPickUpSound();
+
+
 
 #pragma  endregion
 
@@ -160,6 +175,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	USoundCue* EquipSound;
 
+	//  The Type of the Item
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	EItemType ItemType;
+
+	//  Index of the interp location this item is interping to 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	int32 InterpLocIndex;
+
 #pragma  endregion
 
 public:
@@ -179,6 +202,8 @@ public:
 
 	FORCEINLINE USoundCue* GetEquipSound() const { return EquipSound; }
 
+	FORCEINLINE int32 GetItemCount() const { return ItemCount; }
+
 
 #pragma endregion
 #pragma region Setters
@@ -189,5 +214,8 @@ public:
 #pragma region Interping
 	/** Called from the AShooterCharacter class  */
 	void StartItemCurve(AShooterCharacter* Char);
+
+	//Called in aShooter character 
+	void PlayEquipSound();
 #pragma endregion
 };

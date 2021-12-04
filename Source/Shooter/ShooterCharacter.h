@@ -22,6 +22,24 @@ enum class ECombatState :uint8
 
 #pragma endregion
 
+#pragma region  Structur
+
+USTRUCT(BlueprintType)
+struct FInterpLocation
+{
+	GENERATED_BODY()
+
+	/* Scene Component to use for it's location */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* SceneComponent;
+
+	/* Number of items interping to/at this scene component  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 ItemCount;
+};
+
+#pragma endregion
+
 UCLASS()
 class SHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -233,6 +251,58 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
 	float CameraInterpElevation;
 
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* WeaponInterpComp;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp1;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp2;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp3;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp4;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp5;
+
+	/** Starting Amount of  AR ammo   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	USceneComponent* InterpComp6;
+
+	/** Array Of interp location struct   */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	TArray<FInterpLocation> InterpLocations;
+
+	FTimerHandle PickUpSoundTimer;
+
+	FTimerHandle EquipSoundTimer;
+
+	bool bShouldPlayPickUpSound;
+
+	bool bShouldPlayEquipSound;
+
+	void ResetPickUpSoundTimer();
+
+	void ResetEquipSoundTimer();
+
+	/** time to wait before we can play another pickup sound    */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	float PickUpSoundResetTime;
+
+	/** time to wait before we can play another Equip sound   */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess="true"))
+	float EquipeSoundResetTime;
+
 #pragma endregion
 
 #pragma  region Ammo Variables
@@ -348,7 +418,7 @@ public:
 
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
 
-	FVector GetCameraInterpLocation();
+	//FVector GetCameraInterpLocation();
 
 	void GetPickUpItem(AItem* Item);
 
@@ -356,11 +426,26 @@ public:
 
 	FORCEINLINE bool GetCrouching() const { return bCrouching; }
 
+	FInterpLocation GetInterpLocation(int32 Index);
+
+	int32 GetInterpLocationIndex();
+
+	FORCEINLINE bool ShouldPlayPickUpSound() const { return bShouldPlayPickUpSound; }
+
+	FORCEINLINE bool ShouldPlayEquipSound() const { return bShouldPlayEquipSound; }
+
 #pragma  endregion
 
 #pragma  region Setters
 	// Adds / subtracts to/from overlappedItemCount and Updates bShouldTraceForItems 
 	void IncrementOverlappedItemCount(int8 Amount);
+
+	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
+
+	void StartPickUpSoundTimer();
+
+	void StartEquipSoundTimer();
+	
 #pragma  endregion
 
 #pragma  endregion
@@ -537,6 +622,7 @@ protected:
 
 #pragma endregion
 
+	/* Capsule Functions  */
 #pragma region Capsule
 
 	// Interps Capsule Half height when crouching / standing 
@@ -544,11 +630,26 @@ protected:
 
 #pragma endregion
 
+	/* Aiming Functions */
 #pragma region Aiming
 
 	void Aim();
 
 	void StopAiming();
+
+#pragma endregion
+
+	/* Ammo Functions */
+#pragma region Ammo Functions
+
+	void PickUpAmmo(class AAmmo* Ammo);
+
+#pragma endregion
+
+#pragma region Interpolation
+
+	void InitializeInterpLocations();
+
 
 #pragma endregion
 
