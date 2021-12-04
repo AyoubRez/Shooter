@@ -112,4 +112,12 @@ private:
 	/* True when crouching */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Crouching", meta=(AllowPrivateAccess="true"))
 	bool bCrouching;
+
+	/* Change the recoil weight based on turning ans aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float RecoilWeight;
+
+	/* True when Turning in place */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bTurningInPlace;
 };

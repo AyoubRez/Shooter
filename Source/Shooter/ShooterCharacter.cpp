@@ -14,6 +14,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 #include "Weapon.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -33,16 +34,16 @@ AShooterCharacter::AShooterCharacter():
 
 	//Mouse Look Sensitivity scale factor
 	MouseHipTurnRate(1.0f),
-	MouseAimingLookUpRate(0.2f),
+	MouseAimingLookUpRate(0.6f),
 	MouseHipLookUpRate(1.0f),
-	MouseAimingTurnRate(0.2f),
+	MouseAimingTurnRate(0.6f),
 
 	// true when aiming the weapon 
 	bAiming(false),
 
 	//Camera field Of view 
 	CameraDefaultFOV(0.f), //is gonna get set in begin play
-	CameraZoomedFOV(35.f),
+	CameraZoomedFOV(25.f),
 	ZoomInterpolationSpeed(20.f),
 	CameraCurrentFOV(0.f),
 
@@ -77,7 +78,18 @@ AShooterCharacter::AShooterCharacter():
 	CombatState(ECombatState::ECS_Unoccupied),
 
 	//Movement
-	bCrouching(false)
+	bCrouching(false),
+	BaseMovementSpeed(650.f),
+	CrouchMovementSpeed(300.f),
+	BaseGroundFriction(2.f),
+	CrouchingGroundFriction(100.f),
+
+	//capsule
+	StandingCapsuleHalfHeight(88.f),
+	CrouchingCapsuleHalfHeight(44.f),
+
+	//Aiming
+	bAimingButtonPressed(false)
 
 #pragma endregion
 
@@ -88,9 +100,9 @@ AShooterCharacter::AShooterCharacter():
 	// Create a Camera Boom (Pulls In towards the character if there is a collision ) 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 180.f; //Camera Follows at this distance behind the character 
+	CameraBoom->TargetArmLength = 240.f; //Camera Follows at this distance behind the character 
 	CameraBoom->bUsePawnControlRotation = true; //Rotate the arm based on the character
-	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);
+	CameraBoom->SocketOffset = FVector(0.f, 36.f, 80.f);
 
 
 	//Create Follow Camera
@@ -136,6 +148,8 @@ void AShooterCharacter::BeginPlay()
 	EquipWeapon(SpawnDefaultWeapon());
 
 	InitializeAmmoMap();
+
+	GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 }
 
 // Called every frame
@@ -154,6 +168,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	//Trace for items Function
 	TraceForItems();
+
+	//Interp Capsule half height based on Crouching /Standing
+	InterpCapsuleHalfHeight(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -172,7 +189,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &AShooterCharacter::LookUp);
 
 	//Jump Binding 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AShooterCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	//Fire Binding
@@ -374,12 +391,17 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketEndLocatio
 
 void AShooterCharacter::AimingButtonPressed()
 {
-	bAiming = true;
+	bAimingButtonPressed = true;
+	if (CombatState != ECombatState::ECS_Reloading)
+	{
+		Aim();
+	}
 }
 
 void AShooterCharacter::AimingButtonReleased()
 {
-	bAiming = false;
+	bAimingButtonPressed = false;
+	StopAiming();
 }
 
 void AShooterCharacter::CameraInterpolationZoom(float DeltaTime)
@@ -743,11 +765,13 @@ void AShooterCharacter::ReloadButtonPressed()
 void AShooterCharacter::ReloadWeapon()
 {
 	if (CombatState != ECombatState::ECS_Unoccupied)return;
+	
 	if (EquippedWeapon == nullptr) return;
 
 	// Do we have ammo of the correct Type ?
 	if (CarryingAmmo() && !EquippedWeapon->ClipIsFull())
 	{
+		if (bAiming)StopAiming();
 		CombatState = ECombatState::ECS_Reloading;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && ReloadMontage)
@@ -763,6 +787,7 @@ void AShooterCharacter::FinishReloading()
 	// Update the combat stat
 	CombatState = ECombatState::ECS_Unoccupied;
 
+	if (bAimingButtonPressed)Aim();
 	if (EquippedWeapon == nullptr)return;
 	const auto AmmoType{EquippedWeapon->GetAmmoType()};
 
@@ -822,5 +847,68 @@ void AShooterCharacter::CrouchButtonPressed()
 	if (!GetCharacterMovement()->IsFalling())
 	{
 		bCrouching = !bCrouching;
+	}
+	if (bCrouching)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed;
+		GetCharacterMovement()->GroundFriction = CrouchingGroundFriction;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
+		GetCharacterMovement()->GroundFriction = BaseGroundFriction;
+	}
+}
+
+void AShooterCharacter::Jump()
+{
+	if (bCrouching)
+	{
+		bCrouching = false;
+		GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed;
+	}
+	else
+	{
+		Super::Jump();
+	}
+}
+
+void AShooterCharacter::InterpCapsuleHalfHeight(float DeltaTime)
+{
+	float TargetCapsuleHalfHeight{};
+	if (bCrouching)
+	{
+		TargetCapsuleHalfHeight = CrouchingCapsuleHalfHeight;
+	}
+	else
+	{
+		TargetCapsuleHalfHeight = StandingCapsuleHalfHeight;
+	}
+
+	const float InterpHalfHeight{
+		FMath::FInterpTo(GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), TargetCapsuleHalfHeight, DeltaTime, 20.f)
+	};
+
+	// negative Value if crouching positive if standing 
+	const float DeltaCapsuleHalfHeight{InterpHalfHeight - GetCapsuleComponent()->GetScaledCapsuleHalfHeight()};
+	const FVector MeshOffset{0.f, 0.f, -DeltaCapsuleHalfHeight};
+
+	GetMesh()->AddLocalOffset(MeshOffset);
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(InterpHalfHeight);
+}
+
+void AShooterCharacter::Aim()
+{
+	bAiming = true;
+	GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed;
+}
+
+void AShooterCharacter::StopAiming()
+{
+	bAiming = false;
+	if (!bCrouching)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 	}
 }

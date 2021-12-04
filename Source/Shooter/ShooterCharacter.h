@@ -102,9 +102,11 @@ private:
 	float MouseAimingLookUpRate;
 
 	/** Default Camera FOV value  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera", meta=(AllowPrivateAccess="true"))
 	float CameraDefaultFOV;
 
 	/** Zoomed Camera FOV value  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera", meta=(AllowPrivateAccess="true"))
 	float CameraZoomedFOV;
 
 	/** Current field of view in this frame*/
@@ -281,6 +283,48 @@ private:
 	bool bCrouching;
 
 #pragma  endregion
+
+#pragma region Aiming
+
+	/** True If the aiming button is pressed     */
+	bool bAimingButtonPressed;
+
+#pragma  endregion
+
+#pragma region Movement
+
+	/** Regular movement speed    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float BaseMovementSpeed;
+
+	/** Crouching movement speed    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float CrouchMovementSpeed;
+
+	/** Ground friction while not crouching     */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float BaseGroundFriction;
+
+	/** Ground friction while crouching     */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float CrouchingGroundFriction;
+
+#pragma endregion
+
+#pragma region Capsule
+
+	/* Current Half height of the capsule */
+	float CurrentCapsuleHalfHeight;
+
+	/**  capsule Half height when not crouching     */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float StandingCapsuleHalfHeight;
+
+	/** Crouching capsule Half height   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float CrouchingCapsuleHalfHeight;
+
+#pragma endregion
 
 #pragma endregion
 
@@ -487,7 +531,25 @@ protected:
 #pragma region Crouch
 
 	void CrouchButtonPressed();
-	
+
+	virtual void Jump() override;
+
+
+#pragma endregion
+
+#pragma region Capsule
+
+	// Interps Capsule Half height when crouching / standing 
+	void InterpCapsuleHalfHeight(float DeltaTime);
+
+#pragma endregion
+
+#pragma region Aiming
+
+	void Aim();
+
+	void StopAiming();
+
 #pragma endregion
 
 #pragma endregion
