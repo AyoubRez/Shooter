@@ -274,6 +274,14 @@ private:
 
 #pragma endregion
 
+#pragma region Crouching
+
+	/** True If crouching    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement", meta=(AllowPrivateAccess="true"))
+	bool bCrouching;
+
+#pragma  endregion
+
 #pragma endregion
 
 public:
@@ -301,6 +309,8 @@ public:
 	void GetPickUpItem(AItem* Item);
 
 	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
+
+	FORCEINLINE bool GetCrouching() const { return bCrouching; }
 
 #pragma  endregion
 
@@ -471,6 +481,13 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ReleaseClip();
 
+#pragma endregion
+
+	/* Crouch Movement */
+#pragma region Crouch
+
+	void CrouchButtonPressed();
+	
 #pragma endregion
 
 #pragma endregion

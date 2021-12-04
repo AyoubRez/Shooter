@@ -74,7 +74,10 @@ AShooterCharacter::AShooterCharacter():
 	StartingARAmmo(120),
 
 	//Combat Variables
-	CombatState(ECombatState::ECS_Unoccupied)
+	CombatState(ECombatState::ECS_Unoccupied),
+
+	//Movement
+	bCrouching(false)
 
 #pragma endregion
 
@@ -186,6 +189,9 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	//Select Binding
 	PlayerInputComponent->BindAction("ReloadButton", IE_Pressed, this, &AShooterCharacter::ReloadButtonPressed);
+
+	//Crouch
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AShooterCharacter::CrouchButtonPressed);
 }
 
 float AShooterCharacter::GetCrossHairSpreadMultiplier() const
@@ -809,4 +815,12 @@ void AShooterCharacter::GrabClip()
 void AShooterCharacter::ReleaseClip()
 {
 	EquippedWeapon->SetMovingClip(false);
+}
+
+void AShooterCharacter::CrouchButtonPressed()
+{
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		bCrouching = !bCrouching;
+	}
 }
