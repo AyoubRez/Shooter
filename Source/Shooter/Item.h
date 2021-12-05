@@ -83,6 +83,17 @@ protected:
 	void PlayPickUpSound();
 
 
+	virtual void InitializeCustomDepth();
+
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	void EnableGlowMaterial();
+
+	void UpdatePulse();
+
+	void ResetPulseTimer();
+
+	void StartPulseTimer();
 
 #pragma  endregion
 
@@ -183,6 +194,49 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	int32 InterpLocIndex;
 
+	//  The Index for the material we would like to change at runtime 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	int32 MaterialIndex;
+
+	//  Dynamic  instance that we can change at runtime  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	UMaterialInstanceDynamic* DynamicMaterialInstance;
+
+	//  Material instance used with dynamic material instance 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	UMaterialInstance* MaterialInstance;
+
+	bool bCanChangeCustomDepth;
+
+	//  Curve to drive the dynamic material params  
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	class UCurveVector* PulseCurve;
+
+
+	FTimerHandle PulseTimer;
+
+	//  Time for the pulse timer
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float PulseCurveTime;
+
+	//  Time for the pulse timer
+	UPROPERTY(VisibleAnywhere, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float GlowAmount;
+
+	//  Time for the pulse timer
+	UPROPERTY(VisibleAnywhere, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float FresnelExponent;
+
+	//  Time for the pulse timer
+	UPROPERTY(VisibleAnywhere, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	float FresnelReflectFraction;
+
+	//  Curve to drive the dynamic material params  
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	UCurveVector* InterpPulseCurve;
+
+
+
 #pragma  endregion
 
 public:
@@ -217,5 +271,14 @@ public:
 
 	//Called in aShooter character 
 	void PlayEquipSound();
+#pragma endregion
+#pragma region CustomDepth
+
+	virtual void EnableCustomDepth();
+
+	virtual void DisableCustomDepth();
+
+	void DisableGlowMaterial();
+
 #pragma endregion
 };

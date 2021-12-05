@@ -168,6 +168,8 @@ void AShooterCharacter::BeginPlay()
 
 	//Spawn the default weapon and equip it to the mesh 
 	EquipWeapon(SpawnDefaultWeapon());
+	EquippedWeapon->DisableCustomDepth();
+	EquippedWeapon->DisableGlowMaterial();
 
 	InitializeAmmoMap();
 
@@ -714,6 +716,7 @@ void AShooterCharacter::TraceForItems()
 			{
 				//Get hit item and set widget visibility
 				TraceHitItem->GetPickUpWidget()->SetVisibility(true);
+				TraceHitItem->EnableCustomDepth();
 			}
 			//we hit a AItem last frame 
 			if (TraceHitItemLastFrame)
@@ -722,6 +725,7 @@ void AShooterCharacter::TraceForItems()
 				{
 					//Hitting a different item or AItem is null 
 					TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
+					TraceHitItemLastFrame->DisableCustomDepth();
 				}
 			}
 			//Store a reference to hit item for next frame 
@@ -733,6 +737,7 @@ void AShooterCharacter::TraceForItems()
 		// no longer overlapping any items
 		//last item should not display widget
 		TraceHitItemLastFrame->GetPickUpWidget()->SetVisibility(false);
+		TraceHitItemLastFrame->DisableCustomDepth();
 	}
 }
 
