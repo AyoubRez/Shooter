@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Curves/CurveVector.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Sound/SoundCue.h"
@@ -29,7 +30,15 @@ AItem::AItem():
 	ItemInterpY(0.f),
 	InterpInitialYawOffset(0.f),
 	ItemType(EItemType::EIT_Max),
-	InterpLocIndex(0)
+	InterpLocIndex(0),
+	MaterialIndex(0),
+	bCanChangeCustomDepth(true),
+
+	//Dynamic material params
+	GlowAmount(150.f),
+	FresnelExponent(3.f),
+	FresnelReflectFraction(4.f),
+	PulseCurveTime(5.f)
 
 #pragma endregion
 
@@ -84,6 +93,11 @@ void AItem::BeginPlay()
 
 	//Set Item properties based on item State
 	SetItemProperties(ItemState);
+
+	//Set Custom Depth to disabled 
+	InitializeCustomDepth();
+
+	StartPulseTimer();
 }
 
 // Function to trigger on Begin overlap with AreaSphere
@@ -272,9 +286,13 @@ void AItem::FinishInterping()
 		//Subtract  1 from the item count of the interpLocation struct 
 		Character->IncrementInterpLocItemCount(InterpLocIndex, -1);
 		Character->GetPickUpItem(this);
+		SetItemState(EItemState::EIS_PickedUp);
 	}
 	//Scale Item Back to normal 
 	SetActorScale3D(FVector(1.f));
+	DisableGlowMaterial();
+	bCanChangeCustomDepth = true;
+	DisableCustomDepth();
 }
 
 void AItem::ItemInterp(float DeltaTime)
@@ -365,6 +383,88 @@ void AItem::PlayPickUpSound()
 	}
 }
 
+void AItem::EnableCustomDepth()
+{
+	if (bCanChangeCustomDepth)
+	{
+		ItemSkeletalMesh->SetRenderCustomDepth(true);
+	}
+}
+
+void AItem::DisableCustomDepth()
+{
+	if (bCanChangeCustomDepth)
+	{
+		ItemSkeletalMesh->SetRenderCustomDepth(false);
+	}
+}
+
+void AItem::InitializeCustomDepth()
+{
+	DisableCustomDepth();
+}
+
+void AItem::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	if (MaterialInstance)
+	{
+		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
+		ItemSkeletalMesh->SetMaterial(MaterialIndex, DynamicMaterialInstance);
+
+		EnableGlowMaterial();
+	}
+}
+
+void AItem::EnableGlowMaterial()
+{
+	if (DynamicMaterialInstance)
+	{
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowBlendAlpha"), 0.f);
+	}
+}
+
+void AItem::UpdatePulse()
+{
+	float ElapsedTime{};
+	FVector CurveValue{};
+	switch (ItemState)
+	{
+	case EItemState::EIS_PickUp:
+
+		if (PulseCurve)
+		{
+			ElapsedTime = GetWorldTimerManager().GetTimerElapsed(PulseTimer);
+			CurveValue = PulseCurve->GetVectorValue(ElapsedTime);
+		}
+		break;
+	case EItemState::EIS_EquipInterping:
+		if (InterpPulseCurve)
+		{
+			ElapsedTime = GetWorldTimerManager().GetTimerElapsed(ItemInterpTimer);
+			CurveValue = InterpPulseCurve->GetVectorValue(ElapsedTime);
+		}
+		break;
+	default:
+		break;
+	}
+	if (DynamicMaterialInstance)
+	{
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowAmount"), CurveValue.X * GlowAmount);
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("FreneslExponent"), CurveValue.Y * FresnelExponent);
+		DynamicMaterialInstance->SetScalarParameterValue(
+			TEXT("FreneslReflectFraction"), CurveValue.Z * FresnelReflectFraction);
+	}
+}
+
+void AItem::DisableGlowMaterial()
+{
+	if (DynamicMaterialInstance)
+	{
+		DynamicMaterialInstance->SetScalarParameterValue(TEXT("GlowBlendAlpha"), 1.f);
+	}
+}
+
 void AItem::PlayEquipSound()
 {
 	if (Character)
@@ -387,6 +487,22 @@ void AItem::Tick(float DeltaTime)
 
 	//Handle item interp when in the equip interping state 
 	ItemInterp(DeltaTime);
+
+	//Get Curve values from PulseCurve and set dynamic material params
+	UpdatePulse();
+}
+
+void AItem::ResetPulseTimer()
+{
+	StartPulseTimer();
+}
+
+void AItem::StartPulseTimer()
+{
+	if (ItemState == EItemState::EIS_PickUp)
+	{
+		GetWorldTimerManager().SetTimer(PulseTimer, this, &AItem::ResetPulseTimer, PulseCurveTime);
+	}
 }
 
 // Set Item State Function that sets also the item  properties 
@@ -416,6 +532,7 @@ void AItem::StartItemCurve(AShooterCharacter* Char)
 	bInterping = true;
 	SetItemState(EItemState::EIS_EquipInterping);
 
+	GetWorldTimerManager().ClearTimer(PulseTimer);
 	GetWorldTimerManager().SetTimer(ItemInterpTimer, this, &AItem::FinishInterping, ZCurveTime);
 
 	// Get initial Yaw of the camera 
@@ -425,4 +542,6 @@ void AItem::StartItemCurve(AShooterCharacter* Char)
 
 	//Iniitial Yaw offset between camera and item 
 	InterpInitialYawOffset = ItemRotationYaw - CameraRotationYaw;
+
+	bCanChangeCustomDepth = false;
 }
