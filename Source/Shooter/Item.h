@@ -235,6 +235,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	UCurveVector* InterpPulseCurve;
 
+	// BackGround for this item in the inventory  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
+	UTexture2D* IconBackGround;
+
+	// Icon for this item in the inventory  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
+	UTexture2D* IconItem;
+
+	// Icon for the ammo in the inventory  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
+	UTexture2D* AmmoIcon;
 
 
 #pragma  endregion
