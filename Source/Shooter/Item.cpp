@@ -133,6 +133,9 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 		{
 			// Decrement OverlappedItemCounts if OtherActor is a ShooterCharacter
 			ShooterCharacter->IncrementOverlappedItemCount(-1);
+
+			// UnHighlight slot when End overlap with sphere 
+			ShooterCharacter->UnHighLightInventorySlot();
 		}
 	}
 }
@@ -308,6 +311,8 @@ void AItem::FinishInterping()
 		//Subtract  1 from the item count of the interpLocation struct 
 		Character->IncrementInterpLocItemCount(InterpLocIndex, -1);
 		Character->GetPickUpItem(this);
+
+		Character->UnHighLightInventorySlot();
 	}
 	//Scale Item Back to normal 
 	SetActorScale3D(FVector(1.f));
@@ -435,11 +440,57 @@ void AItem::InitializeCustomDepth()
 void AItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	// Load the data in the item rarity data table
+
+	//Path to the item rarity datatable 
+	const FString RarityTablePath(TEXT("DataTable'/Game/_Game/DataTables/ItemRarityDataTable.ItemRarityDataTable'"));
+
+	UDataTable* RarityTableObject = Cast<UDataTable>(
+		StaticLoadObject(UDataTable::StaticClass(), nullptr, *RarityTablePath));
+
+	if (RarityTableObject)
+	{
+		FItemRarityTable* RarityRow = nullptr;
+		switch (ItemRarity)
+		{
+		case EItemRarity::EIR_Damaged:
+			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Damaged"),TEXT(""));
+			break;
+		case EItemRarity::EIR_Common:
+			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Common"),TEXT(""));
+			break;
+		case EItemRarity::EIR_Uncommon:
+			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("UnCommon"),TEXT(""));
+			break;
+		case EItemRarity::EIR_Rare:
+			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Rare"),TEXT(""));
+			break;
+		case EItemRarity::EIR_Legendary:
+			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Legendary"),TEXT(""));
+			break;
+		default:
+			RarityRow = nullptr;
+			break;
+		}
+
+		if (RarityRow)
+		{
+			GlowColor = RarityRow->GlowColor;
+			LightColor = RarityRow->LightColor;
+			DarkColor = RarityRow->DarkColor;
+			NumberOfStars = RarityRow->NumberOfStars;
+			IconBackground = RarityRow->IconBackground;
+			if (GetItemSkeletalMesh())
+			{
+				GetItemSkeletalMesh()->SetCustomDepthStencilValue(RarityRow->CustomDepthStencil);
+			}
+		}
+	}
 	if (MaterialInstance)
 	{
 		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance, this);
+		DynamicMaterialInstance->SetVectorParameterValue(TEXT("FresnelColor"), GlowColor);
 		ItemSkeletalMesh->SetMaterial(MaterialIndex, DynamicMaterialInstance);
-
 		EnableGlowMaterial();
 	}
 }

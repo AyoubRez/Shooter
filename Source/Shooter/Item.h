@@ -3,8 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
+
+
+// Struct
+USTRUCT(BlueprintType)
+struct FItemRarityTable : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor GlowColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor LightColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor DarkColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NumberOfStars;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* IconBackground;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CustomDepthStencil;
+};
 
 // Enumeration Region 
 #pragma region  Enumerations
@@ -129,7 +156,7 @@ private:
 	int32 ItemCount;
 
 	// Item Rarity determines num of starts  
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
 	EItemRarity ItemRarity;
 
 	// Item Rarity determines num of starts  
@@ -234,11 +261,7 @@ private:
 	//  Curve to drive the dynamic material params  
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	UCurveVector* InterpPulseCurve;
-
-	// BackGround for this item in the inventory  
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
-	UTexture2D* IconBackGround;
-
+	
 	// Icon for this item in the inventory  
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
 	UTexture2D* IconItem;
@@ -255,6 +278,30 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
 	bool bCharacterInventoryFull;
 
+
+	// Item Rarity DataTable 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	class UDataTable* ItemRarityDataTable;
+
+	// the color of the glow material  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
+	FLinearColor GlowColor;
+
+	// Light color in the pick up widget  
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
+	FLinearColor LightColor;
+
+	// Dark color in the pick up widget   
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
+	FLinearColor DarkColor;
+
+	// Number of stars  in the pick up widget   
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
+	int32 NumberOfStars;
+
+	// BackGround icon for the inventory    
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Rarity", meta=(AllowPrivateAccess="true"))
+	UTexture2D* IconBackground;
 
 #pragma  endregion
 

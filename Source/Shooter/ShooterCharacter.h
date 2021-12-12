@@ -42,8 +42,11 @@ struct FInterpLocation
 #pragma endregion
 
 #pragma region Delegates
-
+/** Equip Item Delegate */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquipItemDelegate, int32, CurrentSlotIndex, int32, NewSlotIndex);
+
+/** HighLight Delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHighlightIconDelegate, int32, SlotIndex, bool, bStartAnimation);
 
 #pragma endregion
 UCLASS()
@@ -422,6 +425,14 @@ private:
 	UPROPERTY(BlueprintAssignable, Category=Delegates, meta=(AllowPrivateAccess="true"))
 	FEquipItemDelegate EquipItemDelegate;
 
+	/** Delegate for Sending Slot information for playing the icon animation   */
+	UPROPERTY(BlueprintAssignable, Category=Delegates, meta=(AllowPrivateAccess="true"))
+	FHighlightIconDelegate HighlightIconDelegate;
+
+	/** The Index for the currently Highlighted slot   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Inventory, meta=(AllowPrivateAccess="true"))
+	int32 HighLightedSlot;
+
 #pragma endregion
 #pragma endregion
 
@@ -472,6 +483,8 @@ public:
 	void StartPickUpSoundTimer();
 
 	void StartEquipSoundTimer();
+
+	void UnHighLightInventorySlot();
 
 #pragma  endregion
 
@@ -701,6 +714,9 @@ protected:
 	void ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex);
 
 	int32 GetEmptyInventorySlot();
+
+	void HighLightInventorySlot();
+
 
 #pragma endregion
 
