@@ -16,6 +16,7 @@ enum class ECombatState :uint8
 	ECS_Unoccupied UMETA(DisplayName="Unoccupied"),
 	ECS_FireTimerInProgress UMETA(DisplayName="FireTimerInProgress"),
 	ECS_Reloading UMETA(DisplayName="Reloading "),
+	ECS_Equipping UMETA(DisplayName="Equipping "),
 
 	ECS_MAX UMETA(DisplayName="Default Max")
 };
@@ -40,6 +41,11 @@ struct FInterpLocation
 
 #pragma endregion
 
+#pragma region Delegates
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquipItemDelegate, int32, CurrentSlotIndex, int32, NewSlotIndex);
+
+#pragma endregion
 UCLASS()
 class SHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -336,6 +342,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	UAnimMontage* ReloadMontage;
 
+	/** Montage For Equip Animations   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UAnimMontage* EquipMontage;
+
 	/** Transform of the clip when we first grab the clip when reloading    */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	FTransform ClipTransform;
@@ -406,6 +416,13 @@ private:
 
 #pragma endregion
 
+#pragma region Delegate Variables
+
+	/** Delegate for Sending Slot information to inventory bar when equipping   */
+	UPROPERTY(BlueprintAssignable, Category=Delegates, meta=(AllowPrivateAccess="true"))
+	FEquipItemDelegate EquipItemDelegate;
+
+#pragma endregion
 #pragma endregion
 
 public:
@@ -571,7 +588,7 @@ protected:
 	AWeapon* SpawnDefaultWeapon();
 
 	// Takes a weapon and attach it to the mesh 
-	void EquipWeapon(AWeapon* WeaponToEquip);
+	void EquipWeapon(AWeapon* WeaponToEquip, bool bSwapping = false);
 
 	//Drop weapon and let ot fall to the ground function 
 	void DropWeapon();
@@ -611,6 +628,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
 
 	//Called from animation Blueprint with GrabClip notify
 	UFUNCTION(BlueprintCallable)
@@ -660,6 +680,27 @@ protected:
 
 	void InitializeInterpLocations();
 
+
+#pragma endregion
+
+#pragma region Swap Weapons
+
+
+	void FKeyPressed();
+
+	void OneKeyPressed();
+
+	void TwoKeyPressed();
+
+	void ThreeKeyPressed();
+
+	void FourKeyPressed();
+
+	void FiveKeyPressed();
+
+	void ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex);
+
+	int32 GetEmptyInventorySlot();
 
 #pragma endregion
 
