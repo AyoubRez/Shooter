@@ -91,11 +91,15 @@ AShooterCharacter::AShooterCharacter():
 
 	//Aiming
 	bAimingButtonPressed(false),
+
 	//PickUp Sound Timer properties
 	bShouldPlayEquipSound(true),
 	bShouldPlayPickUpSound(true),
 	PickUpSoundResetTime(0.2f),
-	EquipeSoundResetTime(0.2f)
+	EquipeSoundResetTime(0.2f),
+
+	// Icon Animation property
+	HighLightedSlot(-1)
 
 #pragma endregion
 
@@ -736,6 +740,23 @@ void AShooterCharacter::TraceForItems()
 		if (ItemHitResult.bBlockingHit)
 		{
 			TraceHitItem = Cast<AItem>(ItemHitResult.Actor);
+			const auto TraceHitWeapon = Cast<AWeapon>(TraceHitItem);
+			if (TraceHitWeapon)
+			{
+				if (HighLightedSlot == -1)
+				{
+					//Not Currently Highlighting a slot ; HighLight One
+					HighLightInventorySlot();
+				}
+			}
+			else
+			{
+				if (HighLightedSlot != -1)
+				{
+					// A slot is being highlighted , UnHighlightInventory slot
+					UnHighLightInventorySlot();
+				}
+			}
 
 			if (TraceHitItem && TraceHitItem->GetItemState() == EItemState::EIS_EquipInterping)
 			{
@@ -1168,7 +1189,20 @@ int32 AShooterCharacter::GetEmptyInventorySlot()
 	{
 		return Inventory.Num();
 	}
-	return -1; // Inventory is Full 
+	return -1; // Inventory is Full! 
+}
+
+void AShooterCharacter::HighLightInventorySlot()
+{
+	const int32 EmptySlot = GetEmptyInventorySlot();
+	HighlightIconDelegate.Broadcast(EmptySlot, true);
+	HighLightedSlot = EmptySlot;
+}
+
+void AShooterCharacter::UnHighLightInventorySlot()
+{
+	HighlightIconDelegate.Broadcast(HighLightedSlot, false);
+	HighLightedSlot = -1;
 }
 
 int32 AShooterCharacter::GetInterpLocationIndex()
