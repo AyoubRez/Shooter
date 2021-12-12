@@ -38,7 +38,9 @@ AItem::AItem():
 	GlowAmount(150.f),
 	FresnelExponent(3.f),
 	FresnelReflectFraction(4.f),
-	PulseCurveTime(5.f)
+	PulseCurveTime(5.f),
+	SlotIndex(0),
+	bCharacterInventoryFull(false)
 
 #pragma endregion
 
@@ -224,6 +226,7 @@ void AItem::SetItemProperties(EItemState State)
 		// Set Mesh Properties
 		ItemSkeletalMesh->SetSimulatePhysics(true);
 		ItemSkeletalMesh->SetEnableGravity(true);
+		ItemSkeletalMesh->SetVisibility(true);
 		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		ItemSkeletalMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
@@ -243,6 +246,25 @@ void AItem::SetItemProperties(EItemState State)
 		ItemSkeletalMesh->SetSimulatePhysics(false);
 		ItemSkeletalMesh->SetEnableGravity(false);
 		ItemSkeletalMesh->SetVisibility(true);
+		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Set AreaSphere properties 
+		AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Set Collision Box properties
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+
+	case EItemState::EIS_PickedUp:
+		PickUpWidget->SetVisibility(false);
+		// If Equipped
+		/* Set SkeletalMesh Properties*/
+		ItemSkeletalMesh->SetSimulatePhysics(false);
+		ItemSkeletalMesh->SetEnableGravity(false);
+		ItemSkeletalMesh->SetVisibility(false);
 		ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -286,7 +308,6 @@ void AItem::FinishInterping()
 		//Subtract  1 from the item count of the interpLocation struct 
 		Character->IncrementInterpLocItemCount(InterpLocIndex, -1);
 		Character->GetPickUpItem(this);
-		SetItemState(EItemState::EIS_PickedUp);
 	}
 	//Scale Item Back to normal 
 	SetActorScale3D(FVector(1.f));
@@ -368,11 +389,18 @@ FVector AItem::GetInterpLocation()
 	}
 }
 
-void AItem::PlayPickUpSound()
+void AItem::PlayPickUpSound(bool bForcePlaySound)
 {
 	if (Character)
 	{
-		if (Character->ShouldPlayPickUpSound())
+		if (bForcePlaySound)
+		{
+			if (PickUpSound)
+			{
+				UGameplayStatics::PlaySound2D(this, PickUpSound);
+			}
+		}
+		else if (Character->ShouldPlayPickUpSound())
 		{
 			Character->StartPickUpSoundTimer();
 			if (PickUpSound)
@@ -465,11 +493,18 @@ void AItem::DisableGlowMaterial()
 	}
 }
 
-void AItem::PlayEquipSound()
+void AItem::PlayEquipSound(bool bForcePlaySound)
 {
 	if (Character)
 	{
-		if (Character->ShouldPlayEquipSound())
+		if (bForcePlaySound)
+		{
+			if (EquipSound)
+			{
+				UGameplayStatics::PlaySound2D(this, EquipSound);
+			}
+		}
+		else if (Character->ShouldPlayEquipSound())
 		{
 			Character->StartEquipSoundTimer();
 			if (EquipSound)
@@ -514,7 +549,7 @@ void AItem::SetItemState(EItemState State)
 	SetItemProperties(State);
 }
 
-void AItem::StartItemCurve(AShooterCharacter* Char)
+void AItem::StartItemCurve(AShooterCharacter* Char, bool bForcePlaySound)
 {
 	//Store a handel to the character
 	Character = Char;
@@ -525,7 +560,7 @@ void AItem::StartItemCurve(AShooterCharacter* Char)
 	//Add 1 to the Item Count for this interpLocation struct
 	Character->IncrementInterpLocItemCount(InterpLocIndex, 1);
 
-	PlayPickUpSound();
+	PlayPickUpSound(bForcePlaySound);
 	//Store initial Location of the item 
 	ItemInterpStartLocation = GetActorLocation();
 

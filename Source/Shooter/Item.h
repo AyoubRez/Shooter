@@ -80,7 +80,7 @@ protected:
 	//Get InterpLocation based on the item type 
 	FVector GetInterpLocation();
 
-	void PlayPickUpSound();
+	void PlayPickUpSound(bool bForcePlaySound = false);
 
 
 	virtual void InitializeCustomDepth();
@@ -247,6 +247,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
 	UTexture2D* AmmoIcon;
 
+	// Slot in the inventory array  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
+	int32 SlotIndex;
+
+	// True when the Character inventory is full  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
+	bool bCharacterInventoryFull;
+
 
 #pragma  endregion
 
@@ -269,19 +277,27 @@ public:
 
 	FORCEINLINE int32 GetItemCount() const { return ItemCount; }
 
+	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
+
 
 #pragma endregion
 #pragma region Setters
 
 	void SetItemState(EItemState State);
 
+	void SetSlotIndex(int32 Index) { SlotIndex = Index; };
+
+	FORCEINLINE void SetCharacter(AShooterCharacter* Char) { Character = Char; };
+
+	FORCEINLINE void SetCharacterInventoryFull(bool bFull) { bCharacterInventoryFull = bFull; };
+
 #pragma endregion
 #pragma region Interping
 	/** Called from the AShooterCharacter class  */
-	void StartItemCurve(AShooterCharacter* Char);
+	void StartItemCurve(AShooterCharacter* Char, bool bForcePlaySound = false);
 
 	//Called in aShooter character 
-	void PlayEquipSound();
+	void PlayEquipSound(bool bForcePlaySound = false);
 #pragma endregion
 #pragma region CustomDepth
 
