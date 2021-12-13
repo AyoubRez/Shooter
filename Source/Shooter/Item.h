@@ -261,7 +261,7 @@ private:
 	//  Curve to drive the dynamic material params  
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item Properties", meta=(AllowPrivateAccess="true"))
 	UCurveVector* InterpPulseCurve;
-	
+
 	// Icon for this item in the inventory  
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess="true"))
 	UTexture2D* IconItem;
@@ -326,17 +326,44 @@ public:
 
 	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
 
+	FORCEINLINE UMaterialInstance* GetMaterialInstance() const { return MaterialInstance; }
+
+	FORCEINLINE UMaterialInstanceDynamic* GetDynamicMaterialInstance() const { return DynamicMaterialInstance; }
+
+	FORCEINLINE FLinearColor GetGlowColor() const { return GlowColor; }
+
+	FORCEINLINE int32 GetMaterialIndex() const { return MaterialIndex; }
+
 
 #pragma endregion
 #pragma region Setters
 
 	void SetItemState(EItemState State);
 
-	void SetSlotIndex(int32 Index) { SlotIndex = Index; };
+	void SetSlotIndex(int32 Index) { SlotIndex = Index; }
 
-	FORCEINLINE void SetCharacter(AShooterCharacter* Char) { Character = Char; };
+	FORCEINLINE void SetCharacter(AShooterCharacter* Char) { Character = Char; }
 
-	FORCEINLINE void SetCharacterInventoryFull(bool bFull) { bCharacterInventoryFull = bFull; };
+	FORCEINLINE void SetCharacterInventoryFull(bool bFull) { bCharacterInventoryFull = bFull; }
+
+	FORCEINLINE void SetPickUpSound(USoundCue* Sound) { PickUpSound = Sound; }
+
+	FORCEINLINE void SetEquipSound(USoundCue* Sound) { EquipSound = Sound; }
+
+	FORCEINLINE void SetItemName(FString Name) { ItemName = Name; }
+
+	FORCEINLINE void SetIconItem(UTexture2D* Icon) { IconItem = Icon; }
+
+	FORCEINLINE void SetAmmoIcon(UTexture2D* Icon) { AmmoIcon = Icon; }
+
+	FORCEINLINE void SetMaterialInstance(UMaterialInstance* Instance) { MaterialInstance = Instance; }
+
+	FORCEINLINE void SetDynamicMaterialInstance(UMaterialInstanceDynamic* DynamicInstance)
+	{
+		DynamicMaterialInstance = DynamicInstance;
+	}
+
+	FORCEINLINE void SetMaterialIndex(int32 Index) { MaterialIndex = Index; }
 
 #pragma endregion
 #pragma region Interping
