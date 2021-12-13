@@ -5,20 +5,87 @@
 #include "CoreMinimal.h"
 #include "AmmoType.h"
 #include "Item.h"
+#include "WeaponType.h"
 #include "Weapon.generated.h"
 
 
-#pragma region Enumerations
+#pragma region Datatable
 
-UENUM(BlueprintType)
-enum class EWeaponType:uint8
+USTRUCT(BlueprintType)
+struct FWeaponDataTable : public FTableRowBase
 {
-	EWT_SubmachineGun UMETA(DisplayName="SubmachineGun"),
-	EWT_AssaultRifle UMETA(DisplayName="AssaultRifle"),
-	EWT_MAX UMETA(DisplayName="Default MAX"),
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAmmoType AmmoType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 WeaponAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MagazineCapacity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundCue* PickUpSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* EquipSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* ItemMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* InventoryIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* AmmoIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstance* MaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaterialIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClipBoneName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ReloadMontageSection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> AnimBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CrossHairsMiddle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CrossHairsLeft;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CrossHairsRight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CrossHairsBottom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CrossHairsTop;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AutoFireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* MuzzleFlash;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* FireSound;
 };
 
 #pragma endregion
+
+
 /**
  * 
  */
@@ -36,6 +103,8 @@ public:
 protected:
 	//Called to change Weapon State 
 	void StropFalling();
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 private:
 	// Timer for throwing weapon 
 	FTimerHandle ThrowWeaponTimer;
@@ -76,6 +145,42 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
 	FName ClipBoneName;
 
+
+	/* DataTable for Weapon properties    */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UDataTable* WeaponDataTable;
+
+	int32 PreviousMaterialIndex;
+
+	/** Textures for the weapon crossHairs */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UTexture2D* CrossHairsMiddle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UTexture2D* CrossHairsLeft;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UTexture2D* CrossHairsRight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UTexture2D* CrossHairsBottom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UTexture2D* CrossHairsTop;
+
+	/** The Speed which automatic fire happens */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	float AutoFireRate;
+
+	/** Particle System spawned at barrel socket when firing  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	UParticleSystem* MuzzleFlash;
+
+	/** The Sound Played when the weapon is fired  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="DataTable", meta=(AllowPrivateAccess="true"))
+	USoundCue* FireSound;
+
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
@@ -98,6 +203,16 @@ public:
 	FORCEINLINE FName GetClipBoneName() const { return ClipBoneName; }
 
 	FORCEINLINE void SetMovingClip(bool Move) { bMovingClip = Move; }
+
+	FORCEINLINE void SetClipBoneName(FName Name) { ClipBoneName = Name; }
+
+	FORCEINLINE void SetReloadMontageSection(FName Name) { ReloadMontageSection = Name; }
+
+	FORCEINLINE float GetAutoFireRate() const { return AutoFireRate; }
+
+	FORCEINLINE UParticleSystem* GetMuzzleFlash() const { return MuzzleFlash; }
+
+	FORCEINLINE USoundCue* GetFireSound() const { return FireSound; }
 
 	bool ClipIsFull();
 };

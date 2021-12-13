@@ -82,3 +82,66 @@ void AWeapon::StropFalling()
 	SetItemState(EItemState::EIS_PickUp);
 	StartPulseTimer();
 }
+
+void AWeapon::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	const FString WeaponTablePath{TEXT("DataTable'/Game/_Game/DataTables/WeaponDataTable.WeaponDataTable'")};
+
+	UDataTable* WeaponTableObject = Cast<UDataTable>(
+		StaticLoadObject(UDataTable::StaticClass(), nullptr, *WeaponTablePath));
+
+	if (WeaponTableObject)
+	{
+		FWeaponDataTable* WeaponDataRow = nullptr;
+		switch (WeaponType)
+		{
+		case EWeaponType::EWT_SubmachineGun:
+			WeaponDataRow = WeaponTableObject->FindRow<FWeaponDataTable>(FName("SubmachineGun"),TEXT(""));
+			break;
+		case EWeaponType::EWT_AssaultRifle:
+			WeaponDataRow = WeaponTableObject->FindRow<FWeaponDataTable>(FName("AssaultRifle"),TEXT(""));
+			break;
+		default:
+			WeaponDataRow = nullptr;
+			break;
+		}
+
+		if (WeaponDataRow)
+		{
+			AmmoType = WeaponDataRow->AmmoType;
+			Ammo = WeaponDataRow->WeaponAmmo;
+			MagazineCapacity = WeaponDataRow->MagazineCapacity;
+			SetPickUpSound(WeaponDataRow->PickUpSound);
+			SetEquipSound(WeaponDataRow->EquipSound);
+			GetItemSkeletalMesh()->SetSkeletalMesh(WeaponDataRow->ItemMesh);
+			SetItemName(WeaponDataRow->ItemName);
+			SetAmmoIcon(WeaponDataRow->AmmoIcon);
+			SetIconItem(WeaponDataRow->InventoryIcon);
+			SetMaterialInstance(WeaponDataRow->MaterialInstance);
+			PreviousMaterialIndex = GetMaterialIndex();
+			GetItemSkeletalMesh()->SetMaterial(PreviousMaterialIndex, nullptr);
+			SetMaterialIndex(WeaponDataRow->MaterialIndex);
+			SetClipBoneName(WeaponDataRow->ClipBoneName);
+			SetReloadMontageSection(WeaponDataRow->ReloadMontageSection);
+			GetItemSkeletalMesh()->SetAnimInstanceClass(WeaponDataRow->AnimBP);
+			CrossHairsMiddle = WeaponDataRow->CrossHairsMiddle;
+			CrossHairsLeft = WeaponDataRow->CrossHairsLeft;
+			CrossHairsRight = WeaponDataRow->CrossHairsRight;
+			CrossHairsTop = WeaponDataRow->CrossHairsTop;
+			CrossHairsBottom = WeaponDataRow->CrossHairsBottom;
+			AutoFireRate = WeaponDataRow->AutoFireRate;
+			MuzzleFlash = WeaponDataRow->MuzzleFlash;
+			FireSound = WeaponDataRow->FireSound;
+		}
+
+		if (GetMaterialInstance())
+		{
+			SetDynamicMaterialInstance(UMaterialInstanceDynamic::Create(GetMaterialInstance(), this));
+			GetDynamicMaterialInstance()->SetVectorParameterValue(TEXT("FresnelColor"), GetGlowColor());
+			GetItemSkeletalMesh()->SetMaterial(GetMaterialIndex(), GetDynamicMaterialInstance());
+			EnableGlowMaterial();
+		}
+	}
+}

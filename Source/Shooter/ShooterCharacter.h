@@ -152,15 +152,7 @@ private:
 
 	/* Firing Components  */
 #pragma  region Firing
-
-	/** Randomized Fire Sound */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
-	class USoundCue* FireSound;
-
-	/** Flash Spawned at Barrel Socket*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
-	class UParticleSystem* MuzzleFlash;
-
+	
 	/** Montage for firing the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	class UAnimMontage* HipFireMontage;
@@ -182,9 +174,6 @@ private:
 
 	//True When we can fire false when waiting for timer 
 	bool bShouldFire;
-
-	//Rate of automatic gun Fire 
-	float AutomaticFireRate;
 
 	//Set a timer between gun shots 
 	FTimerHandle AutoFireTimer;
@@ -471,6 +460,8 @@ public:
 	FORCEINLINE bool ShouldPlayPickUpSound() const { return bShouldPlayPickUpSound; }
 
 	FORCEINLINE bool ShouldPlayEquipSound() const { return bShouldPlayEquipSound; }
+
+	FORCEINLINE AWeapon* GetEquippedWeapon() const { return EquippedWeapon; }
 
 #pragma  endregion
 

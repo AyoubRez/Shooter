@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponType.h"
 #include "Animation/AnimInstance.h"
 #include "ShooterAnimInstance.generated.h"
 
@@ -124,4 +125,12 @@ private:
 	/* True when Turning in place */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	bool bTurningInPlace;
+	
+	/* Type of the Equipped weapon  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	EWeaponType EquippedWeaponType;
+
+	/* True when not reloading or equipping  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bShouldUseFABRIK;
 };
