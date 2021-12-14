@@ -6,6 +6,7 @@
 #include "Ammo.h"
 #include "DrawDebugHelpers.h"
 #include "Item.h"
+#include "Shooter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -16,6 +17,7 @@
 #include "Sound/SoundCue.h"
 #include "Weapon.h"
 #include "Components/CapsuleComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 
 // Sets default values
@@ -1214,6 +1216,22 @@ void AShooterCharacter::HighLightInventorySlot()
 	const int32 EmptySlot = GetEmptyInventorySlot();
 	HighlightIconDelegate.Broadcast(EmptySlot, true);
 	HighLightedSlot = EmptySlot;
+}
+
+EPhysicalSurface AShooterCharacter::GetSurfaceType()
+{
+	FHitResult HitResult;
+
+	const FVector Start{GetActorLocation()};
+	const FVector End{Start + FVector(0.f, 0.f, -400.f)};
+
+	FCollisionQueryParams QueryParams;
+
+	QueryParams.bReturnPhysicalMaterial = true;
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, QueryParams);
+
+	return UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
 }
 
 void AShooterCharacter::UnHighLightInventorySlot()

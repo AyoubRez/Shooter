@@ -152,7 +152,7 @@ private:
 
 	/* Firing Components  */
 #pragma  region Firing
-	
+
 	/** Montage for firing the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	class UAnimMontage* HipFireMontage;
@@ -709,6 +709,15 @@ protected:
 	void HighLightInventorySlot();
 
 
+#pragma endregion
+
+
+#pragma  region  FootSteps
+
+	UFUNCTION(BlueprintCallable)
+	EPhysicalSurface GetSurfaceType();
+
+	
 #pragma endregion
 
 #pragma endregion
