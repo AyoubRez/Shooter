@@ -11,7 +11,12 @@ AWeapon::AWeapon():
 	WeaponType(EWeaponType::EWT_SubmachineGun),
 	AmmoType(EAmmoType::EAT_9mm),
 	ReloadMontageSection(FName(TEXT("ReloadSMG"))),
-	ClipBoneName(FName(TEXT("smg_clip")))
+	ClipBoneName(FName(TEXT("smg_clip"))),
+	SlideDisplacement(0.f),
+	SlideDisplacementTime(0.2f),
+	bMovingSlide(false),
+	MaxSlideDisplacement(4.f),
+	MaxRecoilRotation(20.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -27,6 +32,9 @@ void AWeapon::Tick(float DeltaSeconds)
 
 		GetItemSkeletalMesh()->SetWorldRotation(MeshRotation, false, nullptr, ETeleportType::TeleportPhysics);
 	}
+
+	// Update slide on pistol 
+	UpdateSlideDisplacement();
 }
 
 void AWeapon::ThrowWeapon()
@@ -76,6 +84,29 @@ bool AWeapon::ClipIsFull()
 	return Ammo >= MagazineCapacity;
 }
 
+void AWeapon::StartSlideTimer()
+{
+	bMovingSlide = true;
+	GetWorldTimerManager().SetTimer(SlideTimer, this, &AWeapon::FinishMovingSlide, SlideDisplacementTime);
+}
+
+void AWeapon::FinishMovingSlide()
+{
+	bMovingSlide = false;
+}
+
+void AWeapon::UpdateSlideDisplacement()
+{
+	if (SlideDisplacementCurve && bMovingSlide)
+	{
+		const float ElapsedTime{GetWorldTimerManager().GetTimerElapsed(SlideTimer)};
+		const float CurveValue{SlideDisplacementCurve->GetFloatValue(ElapsedTime)};
+
+		SlideDisplacement = CurveValue * MaxSlideDisplacement;
+		RecoilRotation = CurveValue * MaxRecoilRotation;
+	}
+}
+
 void AWeapon::StropFalling()
 {
 	bFalling = false;
@@ -102,6 +133,9 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			break;
 		case EWeaponType::EWT_AssaultRifle:
 			WeaponDataRow = WeaponTableObject->FindRow<FWeaponDataTable>(FName("AssaultRifle"),TEXT(""));
+			break;
+		case EWeaponType::EWT_Pistol:
+			WeaponDataRow = WeaponTableObject->FindRow<FWeaponDataTable>(FName("Pistol"),TEXT(""));
 			break;
 		default:
 			WeaponDataRow = nullptr;
@@ -134,6 +168,7 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			AutoFireRate = WeaponDataRow->AutoFireRate;
 			MuzzleFlash = WeaponDataRow->MuzzleFlash;
 			FireSound = WeaponDataRow->FireSound;
+			BoneToHide = WeaponDataRow->BoneToHide;
 		}
 
 		if (GetMaterialInstance())
@@ -143,5 +178,14 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			GetItemSkeletalMesh()->SetMaterial(GetMaterialIndex(), GetDynamicMaterialInstance());
 			EnableGlowMaterial();
 		}
+	}
+}
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	if (BoneToHide != FName(""))
+	{
+		GetItemSkeletalMesh()->HideBoneByName(BoneToHide, PBO_None);
 	}
 }
