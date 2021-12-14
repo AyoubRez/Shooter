@@ -84,6 +84,9 @@ struct FWeaponDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName BoneToHide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAutomatic;
 };
 
 #pragma endregion
@@ -220,6 +223,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pistol", meta=(AllowPrivateAccess="true"))
 	float RecoilRotation;
 
+	/** True for auto gun fire    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	bool bAutomatic;
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
@@ -256,6 +263,11 @@ public:
 	bool ClipIsFull();
 
 	void StartSlideTimer();
+
+	FORCEINLINE bool GetAutomatic() const
+	{
+		return bAutomatic;
+	}
 
 protected:
 	void FinishMovingSlide();
