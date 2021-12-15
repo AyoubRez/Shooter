@@ -87,6 +87,12 @@ struct FWeaponDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAutomatic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HeadShotDamage;
 };
 
 #pragma endregion
@@ -227,6 +233,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
 	bool bAutomatic;
 
+	/** Amount of damage caused by bullet   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	float Damage;
+
+	/** Amount of damage when bullet hit the head   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Properties", meta=(AllowPrivateAccess="true"))
+	float HeadShotDamage;
+
 public:
 	// Called to throw Equipped weapon 
 	void ThrowWeapon();
@@ -264,10 +278,11 @@ public:
 
 	void StartSlideTimer();
 
-	FORCEINLINE bool GetAutomatic() const
-	{
-		return bAutomatic;
-	}
+	FORCEINLINE bool GetAutomatic() const { return bAutomatic; }
+
+	FORCEINLINE float GetDamage() const { return Damage; }
+
+	FORCEINLINE float GetHeadShotDamage() const { return HeadShotDamage; }
 
 protected:
 	void FinishMovingSlide();

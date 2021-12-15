@@ -520,7 +520,7 @@ protected:
 	void FireWeapon();
 
 	/** The Hit Location for the Beam */
-	bool GetBeamEndLocation(const FVector& MuzzleSocketEndLocation, FVector& OutBeamLocation);
+	bool GetBeamEndLocation(const FVector& MuzzleSocketEndLocation, FHitResult& OutHitResult);
 
 	/** Called when Fire Button is Pressed */
 	void FireButtonPressed();
