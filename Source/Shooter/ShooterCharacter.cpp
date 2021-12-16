@@ -103,7 +103,11 @@ AShooterCharacter::AShooterCharacter():
 	EquipeSoundResetTime(0.2f),
 
 	// Icon Animation property
-	HighLightedSlot(-1)
+	HighLightedSlot(-1),
+
+	// Attributes
+	Health(400.f),
+	MaxHealth(400.f)
 
 #pragma endregion
 
@@ -155,6 +159,22 @@ AShooterCharacter::AShooterCharacter():
 	InterpComp5->SetupAttachment(GetFollowCamera());
 	InterpComp6 = CreateDefaultSubobject<USceneComponent>(TEXT("InterpolationComponent6"));
 	InterpComp6->SetupAttachment(GetFollowCamera());
+}
+
+float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+                                    AActor* DamageCauser)
+{
+	//Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (Health - DamageAmount <= 0.f)
+	{
+		Health = 0.f;
+	}
+	else
+	{
+		Health -= DamageAmount;
+	}
+	return DamageAmount;
 }
 
 // Called when the game starts or when spawned

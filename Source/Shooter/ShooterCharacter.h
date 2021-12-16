@@ -58,6 +58,10 @@ public:
 	// Sets default values for this character's properties
 	AShooterCharacter();
 
+	// Take Combat Damage
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	                         AActor* DamageCauser) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -423,7 +427,22 @@ private:
 	int32 HighLightedSlot;
 
 #pragma endregion
+
+
+#pragma region Character Attributes
+
+	/** Character Health   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes, meta=(AllowPrivateAccess="true"))
+	float Health;
+
+	/** Character MaxHealth   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes, meta=(AllowPrivateAccess="true"))
+	float MaxHealth;
+
+
 #pragma endregion
+#pragma endregion
+
 
 public:
 #pragma region public Function for ShooterCharacter
@@ -717,7 +736,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	EPhysicalSurface GetSurfaceType();
 
-	
+
 #pragma endregion
 
 #pragma endregion

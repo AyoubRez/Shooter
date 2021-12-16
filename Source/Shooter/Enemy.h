@@ -42,6 +42,60 @@ protected:
 
 	void UpdateHitNumbers();
 
+	// Called when something overlaps with the agro sphere
+	UFUNCTION()
+	void AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                       int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+	void SetStunned(bool Stunned);
+
+	// Called when something overlaps with the attack sphere
+	UFUNCTION()
+	void AttackRangeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                        UPrimitiveComponent* OtherComp,
+	                        int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// Called when something overlaps with the attack sphere
+	UFUNCTION()
+	void AttackRangeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                           UPrimitiveComponent* OtherComp,
+	                           int32 OtherBodyIndex);
+
+	// Called to play an attack montage 
+	UFUNCTION(BlueprintCallable)
+	void PlayAttackMontage(FName Section, float PlayRate = 1.0f);
+
+	UFUNCTION(BlueprintPure)
+	FName GetAttackSectionName();
+
+	// Called when something overlaps with the left weapon box
+	UFUNCTION()
+	void OnLeftWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                         UPrimitiveComponent* OtherComp,
+	                         int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// Called when something overlaps with the right weapon box
+	UFUNCTION()
+	void OnRightWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                          UPrimitiveComponent* OtherComp,
+	                          int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// Activate / Deactivate Collision for weapons  
+	UFUNCTION(BlueprintCallable)
+	void ActivateLeftWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void DeactivateLeftWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateRightWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void DeactivateRightWeapon();
+
+	void DoDamage(AActor* Victime);
+
 private:
 	/** Particles to spawn when hit by bullets */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
@@ -94,6 +148,67 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	float HitNumberDestroyTime;
 
+	/** True when in attack range    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bInAttackRange;
+
+#pragma region AI
+
+	/** Behavior Tree for the AI Character    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Behavior Tree ", meta=(AllowPrivateAccess="true"))
+	class UBehaviorTree* BehaviorTree;
+
+	/** Point for the enemy to move to    */
+	UPROPERTY(EditAnywhere, Category="Behavior Tree ", meta=(AllowPrivateAccess="true", MakeEditWidget="true"))
+	FVector PatrolPoint;
+
+	class AEnemyController* EnemyController;
+
+	/** Second Point for the enemy to move to    */
+	UPROPERTY(EditAnywhere, Category="Behavior Tree ", meta=(AllowPrivateAccess="true", MakeEditWidget="true"))
+	FVector PatrolPointTwo;
+
+	/** Overlap Sphere for when the enemy becomes hostel    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class USphereComponent* AgroSphere;
+
+	/** True when Playing the get hit animation    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bStunned;
+
+
+	/** Chance of being stunned between 0 and 1    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float StunChance;
+
+	/**  Sphere for Attack Range   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	USphereComponent* AttackRangeSphere;
+
+	/** Attack Montage  Animation   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UAnimMontage* AttackMontage;
+
+	/** The Four attack montage Section names */
+	FName AttackLFast;
+	FName AttackRFast;
+	FName AttackL;
+	FName AttackR;
+
+	/** Collision Volume for the left weapon     */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	class UBoxComponent* LeftWeaponCollision;
+
+	/** Collision Volume for the Right weapon    */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UBoxComponent* RightWeaponCollision;
+
+	/** Base damage for enemy   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float BaseDamage;
+
+#pragma endregion
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -111,4 +226,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShowHitNumber(int32 Damage, FVector HitLocation, bool bHeadShot);
+
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 };
