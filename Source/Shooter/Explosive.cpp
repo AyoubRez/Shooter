@@ -74,7 +74,7 @@ void AExplosive::BulletHit_Implementation(FHitResult HitResult)
 float AExplosive::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                              AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	//Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (Health - DamageAmount <= 0.f)
 	{
 		Health = 0.f;
