@@ -107,7 +107,8 @@ AShooterCharacter::AShooterCharacter():
 
 	// Attributes
 	Health(400.f),
-	MaxHealth(400.f)
+	MaxHealth(400.f),
+	StunChance(.25f)
 
 #pragma endregion
 
@@ -169,6 +170,7 @@ float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	if (Health - DamageAmount <= 0.f)
 	{
 		Health = 0.f;
+		Die();
 	}
 	else
 	{
@@ -518,7 +520,8 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketEndLocatio
 void AShooterCharacter::AimingButtonPressed()
 {
 	bAimingButtonPressed = true;
-	if (CombatState != ECombatState::ECS_Reloading && CombatState != ECombatState::ECS_Equipping)
+	if (CombatState != ECombatState::ECS_Reloading && CombatState != ECombatState::ECS_Equipping && CombatState !=
+		ECombatState::ECS_Stunned)
 	{
 		Aim();
 	}
@@ -645,6 +648,7 @@ void AShooterCharacter::StartFireTimer()
 
 void AShooterCharacter::AutoFireReset()
 {
+	if (CombatState == ECombatState::ECS_Stunned)return;
 	CombatState = ECombatState::ECS_Unoccupied;
 	if (EquippedWeapon == nullptr) return;
 	if (WeaponHasAmmo())
@@ -1008,6 +1012,7 @@ void AShooterCharacter::ReloadWeapon()
 
 void AShooterCharacter::FinishReloading()
 {
+	if (CombatState == ECombatState::ECS_Stunned)return;
 	// Update the combat stat
 	CombatState = ECombatState::ECS_Unoccupied;
 
@@ -1044,6 +1049,7 @@ void AShooterCharacter::FinishReloading()
 
 void AShooterCharacter::FinishEquipping()
 {
+	if (CombatState == ECombatState::ECS_Stunned)return;
 	CombatState = ECombatState::ECS_Unoccupied;
 	if (bAimingButtonPressed)
 	{
@@ -1298,10 +1304,72 @@ EPhysicalSurface AShooterCharacter::GetSurfaceType()
 	return UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
 }
 
+void AShooterCharacter::EndStun()
+{
+	CombatState = ECombatState::ECS_Unoccupied;
+	ShowStunned(false);
+	if (bAimingButtonPressed)
+	{
+		Aim();
+	}
+}
+
+void AShooterCharacter::Die()
+{
+	if (bDying)return;
+	bDying = true;
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance && DeathMontage)
+	{
+		const FName DeathMontageSectionOne{"DeathA"};
+		const FName DeathMontageSectionTwo{"DeathB"};
+
+		const float RandomNumber{FMath::FRandRange(0, 1)};
+
+		AnimInstance->Montage_Play(DeathMontage);
+		if (RandomNumber <= 0.5f)
+		{
+			AnimInstance->Montage_JumpToSection(DeathMontageSectionOne);
+		}
+		else
+		{
+			AnimInstance->Montage_JumpToSection(DeathMontageSectionTwo);
+		}
+	}
+}
+
+void AShooterCharacter::FinishDeath()
+{
+	GetMesh()->bPauseAnims = true;
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (PC)
+	{
+		PC->StopMovement();
+	}
+
+	// We Can Do more here 
+}
+
 void AShooterCharacter::UnHighLightInventorySlot()
 {
 	HighlightIconDelegate.Broadcast(HighLightedSlot, false);
 	HighLightedSlot = -1;
+}
+
+void AShooterCharacter::Stun()
+{
+	if (bDying)return;
+	CombatState = ECombatState::ECS_Stunned;
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && HitReactMontage)
+	{
+		AnimInstance->Montage_Play(HitReactMontage);
+		ShowStunned(true);
+		// Jump Section
+	}
 }
 
 int32 AShooterCharacter::GetInterpLocationIndex()

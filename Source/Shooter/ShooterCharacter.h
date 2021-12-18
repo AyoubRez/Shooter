@@ -17,6 +17,7 @@ enum class ECombatState :uint8
 	ECS_FireTimerInProgress UMETA(DisplayName="FireTimerInProgress"),
 	ECS_Reloading UMETA(DisplayName="Reloading "),
 	ECS_Equipping UMETA(DisplayName="Equipping "),
+	ECS_Stunned UMETA(DisplayName="Stunned "),
 
 	ECS_MAX UMETA(DisplayName="Default Max")
 };
@@ -441,6 +442,29 @@ private:
 
 
 #pragma endregion
+
+	/** Sound Made When Character get hit with attack  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess="true"))
+	class USoundCue* MeleeImpactCue;
+
+
+	/** Blood Splatter Particles for Melee Hit  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess="true"))
+	UParticleSystem* BloodParticles;
+
+	/** Anim montage  for when the character is stunned */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess="true"))
+	UAnimMontage* HitReactMontage;
+
+	/** Chance of  being stunned */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess="true"))
+	float StunChance;
+
+	/** Anim montage  for when the character is Dying */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Combat, meta=(AllowPrivateAccess="true"))
+	UAnimMontage* DeathMontage;
+
+	bool bDying;
 #pragma endregion
 
 
@@ -482,6 +506,12 @@ public:
 
 	FORCEINLINE AWeapon* GetEquippedWeapon() const { return EquippedWeapon; }
 
+	FORCEINLINE USoundCue* GetMeleeImpactCue() const { return MeleeImpactCue; }
+
+	FORCEINLINE UParticleSystem* GetBloodParticles() const { return BloodParticles; }
+
+	FORCEINLINE float GetStunChance() const { return StunChance; }
+
 #pragma  endregion
 
 #pragma  region Setters
@@ -495,6 +525,9 @@ public:
 	void StartEquipSoundTimer();
 
 	void UnHighLightInventorySlot();
+
+	void Stun();
+
 
 #pragma  endregion
 
@@ -738,6 +771,22 @@ protected:
 
 
 #pragma endregion
+
+#pragma region Stun
+
+	/** */
+	UFUNCTION(BlueprintCallable)
+	void EndStun();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowStunned(bool bStunnedStateShown);
+
+#pragma endregion
+
+	void Die();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishDeath();
 
 #pragma endregion
 };

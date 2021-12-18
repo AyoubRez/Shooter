@@ -94,7 +94,20 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void DeactivateRightWeapon();
 
-	void DoDamage(AActor* Victime);
+	void DoDamage(class AShooterCharacter* Victim);
+
+	void SpawnBlood(AShooterCharacter* Victim, FName SocketName);
+
+	/** Attempt to stun character */
+	void StunCharacter(AShooterCharacter* Victim);
+
+	void ResetCanAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishDeath();
+
+	UFUNCTION()
+	void DestroyEnemy();
 
 private:
 	/** Particles to spawn when hit by bullets */
@@ -206,6 +219,36 @@ private:
 	/** Base damage for enemy   */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
 	float BaseDamage;
+
+	/** Left weapon Socket name    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	FName LeftWeaponSocket;
+
+	/** Right weapon Socket name    */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	FName RightWeaponSocket;
+
+	/** true when enemy can attack   */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	bool bCanAttack;
+
+	FTimerHandle AttackWaitTimer;
+
+	UPROPERTY(EditAnywhere, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float AttackWaitTime;
+
+	/** Death Montage  Animation   */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UAnimMontage* DeathMontage;
+
+	bool bDying;
+
+	FTimerHandle DeathTimer;
+
+	// Time after death until destroy
+	UPROPERTY(EditAnywhere, Category="Combat", meta=(AllowPrivateAccess="true"))
+	float DeathTime;
+
 
 #pragma endregion
 
