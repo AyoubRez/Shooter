@@ -7,6 +7,7 @@
 #include "BulletHitInterface.h"
 #include "DrawDebugHelpers.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "Explosive.h"
 #include "Item.h"
 #include "Shooter.h"
@@ -19,6 +20,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 #include "Weapon.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 
@@ -171,6 +173,12 @@ float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	{
 		Health = 0.f;
 		Die();
+
+		const auto EnemyController = Cast<AEnemyController>(EventInstigator);
+		if (EnemyController)
+		{
+			EnemyController->GetBlackboardComponent()->SetValueAsBool(FName("IsCharacterDead"), true);
+		}
 	}
 	else
 	{
@@ -703,7 +711,7 @@ void AShooterCharacter::SendBullet()
 
 				if (BulletHitInterface)
 				{
-					BulletHitInterface->BulletHit_Implementation(BeamHitResult);
+					BulletHitInterface->BulletHit_Implementation(BeamHitResult, this, GetController());
 				}
 
 				AEnemy* HitEnemy = Cast<AEnemy>(BeamHitResult.Actor.Get());
@@ -1318,6 +1326,8 @@ void AShooterCharacter::Die()
 {
 	if (bDying)return;
 	bDying = true;
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	DisableInput(PlayerController);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	if (AnimInstance && DeathMontage)
@@ -1343,11 +1353,11 @@ void AShooterCharacter::FinishDeath()
 {
 	GetMesh()->bPauseAnims = true;
 
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
-	if (PC)
+	if (PlayerController)
 	{
-		PC->StopMovement();
+		PlayerController->StopMovement();
 	}
 
 	// We Can Do more here 

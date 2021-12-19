@@ -512,6 +512,10 @@ public:
 
 	FORCEINLINE float GetStunChance() const { return StunChance; }
 
+	FORCEINLINE float GetHealth() const { return Health; }
+
+	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
+
 #pragma  endregion
 
 #pragma  region Setters
@@ -528,7 +532,10 @@ public:
 
 	void Stun();
 
-
+	void SetHealth(float ShooterHealth)
+	{
+		Health = ShooterHealth;
+	}
 #pragma  endregion
 
 #pragma  endregion
