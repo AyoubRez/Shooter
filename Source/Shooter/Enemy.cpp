@@ -3,7 +3,6 @@
 
 #include "Enemy.h"
 
-#include "DrawDebugHelpers.h"
 #include "EnemyController.h"
 #include "ShooterCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -98,8 +97,6 @@ void AEnemy::BeginPlay()
 	const FVector WorldPatrolPoint = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPoint);
 	const FVector WorldPatrolPointTwo = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPointTwo);
 
-	DrawDebugSphere(GetWorld(), WorldPatrolPoint, 25.f, 12, FColor::Red, true);
-	DrawDebugSphere(GetWorld(), WorldPatrolPointTwo, 25.f, 12, FColor::Red, true);
 
 	if (EnemyController)
 	{
@@ -213,8 +210,14 @@ void AEnemy::AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	const auto Character = Cast<AShooterCharacter>(OtherActor);
 	if (Character)
 	{
-		// Set The value of the target black board Key
-		EnemyController->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Character);
+		if (EnemyController)
+		{
+			if (EnemyController->GetBlackboardComponent())
+			{
+				// Set The value of the target black board Key
+				EnemyController->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Character);
+			}
+		}
 	}
 }
 
@@ -420,9 +423,10 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AEnemy::BulletHit_Implementation(FHitResult HitResult)
+
+void AEnemy::BulletHit_Implementation(FHitResult HitResult, AActor* Shooter, AController* ShooterController)
 {
-	IBulletHitInterface::BulletHit_Implementation(HitResult);
+	IBulletHitInterface::BulletHit_Implementation(HitResult, Shooter, ShooterController);
 
 	if (ImpactSound)
 	{
@@ -432,18 +436,6 @@ void AEnemy::BulletHit_Implementation(FHitResult HitResult)
 	if (ImpactParticles)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, HitResult.Location, FRotator(0.f), true);
-	}
-
-	if (bDying)return;
-	ShowHealthBar();
-
-	//Determine whether bullet hit stuns
-	const float Stunned = FMath::FRandRange(0.f, 1.f);
-	if (Stunned <= StunChance)
-	{
-		// Stun the Enemy
-		PlayHitMontage(FName("HitReactFront"));
-		SetStunned(true);
 	}
 }
 
@@ -466,5 +458,18 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	{
 		Health -= DamageAmount;
 	}
+
+	if (bDying)return DamageAmount;
+	ShowHealthBar();
+
+	//Determine whether bullet hit stuns
+	const float Stunned = FMath::FRandRange(0.f, 1.f);
+	if (Stunned <= StunChance)
+	{
+		// Stun the Enemy
+		PlayHitMontage(FName("HitReactFront"));
+		SetStunned(true);
+	}
+
 	return DamageAmount;
 }

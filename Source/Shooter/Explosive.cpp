@@ -3,6 +3,8 @@
 
 #include "Explosive.h"
 
+#include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -11,10 +13,17 @@
 AExplosive::AExplosive():
 	Health(100.f),
 	MaxHealth(100.f),
-	HealthBarDisplayTime(4.f)
+	HealthBarDisplayTime(4.f),
+	Damage(100.f)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	ExplosiveMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Explosive Mesh"));
+	SetRootComponent(ExplosiveMesh);
+
+	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("OverlapSphere"));
+	OverlapSphere->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +38,7 @@ void AExplosive::ShowHealthBar_Implementation()
 	GetWorldTimerManager().SetTimer(HealthBarTimer, this, &AExplosive::HideHealthBar, HealthBarDisplayTime);
 }
 
-void AExplosive::Explode()
+void AExplosive::Explode(AActor* Shooter, AController* ShooterController)
 {
 	HideHealthBar();
 
@@ -44,7 +53,21 @@ void AExplosive::Explode()
 		                                         true);
 	}
 
-	// TODO Apply Explosive Damage
+	TArray<AActor*> OverlappingActors;
+	//TArray<AActor*> OverlappingExplosives;
+	GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
+	//GetOverlappingActors(OverlappingExplosives, StaticClass());
+
+	for (auto Actor : OverlappingActors)
+	{
+		UGameplayStatics::ApplyDamage(Actor, Damage, ShooterController, Shooter, UDamageType::StaticClass());
+	}
+	/*for (auto Explo : OverlappingExplosives)
+	{
+
+		//UGameplayStatics::ApplyDamage(Explo, Damage, ShooterController, Shooter, UDamageType::StaticClass());
+		//TODO Investigate and implement chaine explosion
+	}*/
 
 	Destroy();
 }
@@ -55,9 +78,9 @@ void AExplosive::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AExplosive::BulletHit_Implementation(FHitResult HitResult)
+void AExplosive::BulletHit_Implementation(FHitResult HitResult, AActor* Shooter, AController* ShooterController)
 {
-	IBulletHitInterface::BulletHit_Implementation(HitResult);
+	IBulletHitInterface::BulletHit_Implementation(HitResult, Shooter, ShooterController);
 	if (ImpactSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
@@ -78,7 +101,7 @@ float AExplosive::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	if (Health - DamageAmount <= 0.f)
 	{
 		Health = 0.f;
-		Explode();
+		Explode(DamageCauser, EventInstigator);
 	}
 	else
 	{
