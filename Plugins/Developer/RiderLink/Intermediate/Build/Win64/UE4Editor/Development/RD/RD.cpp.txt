@@ -1,5 +1,5 @@
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\RD.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\RD.h
 C:\Program Files\Epic Games\UE_4.27\Engine\Source\Runtime\Core\Public\Logging/LogMacros.h
 C:\Program Files\Epic Games\UE_4.27\Engine\Source\Runtime\Core\Public\CoreTypes.h
 C:\Program Files\Epic Games\UE_4.27\Engine\Source\Runtime\Core\Public\HAL/Platform.h
