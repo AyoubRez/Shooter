@@ -465,6 +465,11 @@ private:
 	UAnimMontage* DeathMontage;
 
 	bool bDying;
+
+	/** True when character is dead */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess="true"))
+	bool bDead;
+	
 #pragma endregion
 
 

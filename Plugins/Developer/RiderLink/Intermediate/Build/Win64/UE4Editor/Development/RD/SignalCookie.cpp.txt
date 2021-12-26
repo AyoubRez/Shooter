@@ -1,5 +1,5 @@
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\src\rd_core_cpp\src\main\reactive\base\SignalCookie.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\src\rd_core_cpp\src\main\reactive\base\SignalCookie.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\cstdint
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals_core.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime.h
@@ -8,7 +8,7 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\vadefs.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\xkeycheck.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\stdint.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\src\rd_core_cpp\rd_core_export.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\src\rd_core_cpp\rd_core_export.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\atomic
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\crtdbg.h

@@ -110,7 +110,8 @@ AShooterCharacter::AShooterCharacter():
 	// Attributes
 	Health(400.f),
 	MaxHealth(400.f),
-	StunChance(.25f)
+	StunChance(.25f),
+	bDead(false)
 
 #pragma endregion
 
@@ -1325,6 +1326,7 @@ void AShooterCharacter::EndStun()
 void AShooterCharacter::Die()
 {
 	if (bDying)return;
+	bDead = true;
 	bDying = true;
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	DisableInput(PlayerController);

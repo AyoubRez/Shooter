@@ -1,9 +1,9 @@
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/spdlog-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/spdlog.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/common.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/tweakme.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/null_mutex.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UE4Editor\Development\RD\Definitions.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/spdlog-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/spdlog.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/common.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/tweakme.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/null_mutex.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\atomic
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals_core.h
@@ -97,11 +97,11 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\vector
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\xbit_ops.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\xnode_handle.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/fmt.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/bundled/core.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/fmt.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/bundled/core.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\iterator
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\string_view
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/bundled/format.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/fmt/bundled/format.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\algorithm
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\cerrno
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\stdexcept
@@ -118,8 +118,8 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\mmintrin.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\zmmintrin.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\ammintrin.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/registry.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/cfg/log_levels.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/registry.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/cfg/log_levels.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\mutex
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\system_error
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\__msvc_system_error_abi.hpp
@@ -130,28 +130,28 @@ C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\process.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_startup.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\math.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_startup.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/logger.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/backtracer.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg_buffer.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/circular_q.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/logger.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/backtracer.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg_buffer.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/circular_q.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\cassert
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\assert.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/os.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/version.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/synchronous_factory.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/pattern_formatter.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/formatter.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/common-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/backtracer-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/registry-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/periodic_worker.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/os.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/version.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/synchronous_factory.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/pattern_formatter.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/formatter.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/common-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/backtracer-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/registry-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/periodic_worker.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\condition_variable
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/wincolor_sink.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/console_globals.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/sink.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/wincolor_sink.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/console_globals.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/sink.h
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\array
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/windows_include.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/windows_include.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\windows.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared\winapifamily.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared\winpackagefamily.h
@@ -260,15 +260,15 @@ C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\winsvc.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\mcx.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\imm.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\ime_cmodes.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/os-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/os-inl.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\io.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_io.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\direct.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/pattern_formatter-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/fmt_helper.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg_buffer-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/logger-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/sink-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/base_sink-inl.h
-C:\Users\u958433\Desktop\Learning\UdemyCourses\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/base_sink.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/pattern_formatter-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/fmt_helper.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/details/log_msg_buffer-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/logger-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/sink-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/base_sink-inl.h
+C:\Users\u958433\Desktop\Shooter\Plugins\Developer\RiderLink\Source\RD\thirdparty\spdlog\include\spdlog/sinks/base_sink.h
